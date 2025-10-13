@@ -1,5 +1,5 @@
 {
-  "name": "blue-post",
+  "name": "blue-pos",
   "version": "1.0.4",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",

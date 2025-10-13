@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: blue-post
+productName: blue-pos
 directories:
   buildResources: build
   output: dist
@@ -21,7 +21,7 @@ win:
     - target: zip
       arch:
         - x64
-  executableName: blue-post
+  executableName: blue-pos
 
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
@@ -57,5 +57,5 @@ npmRebuild: false
 publish:
   provider: github
   owner: zizicode
-  repo: blue-post
+  repo: blue-pos
   releaseType: release
