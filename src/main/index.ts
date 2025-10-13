@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.ico?asset'
 import { autoUpdater } from 'electron-updater'
 
 let mainWindow: BrowserWindow | null = null
@@ -88,7 +88,8 @@ function initAutoUpdater() {
 
 // --- 🪟 INICIO DE APP ---
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.electron.bluepost')
+  app.setAppUserModelId('com.electron.bluepost')
   app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window))
 
   ipcMain.on('ping', () => console.log('pong'))

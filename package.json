@@ -51,14 +51,37 @@
     "vite": "^7.1.6"
   },
   "build": {
-    "appId": "com.ganstersport.app",
+    "appId": "com.bluepos.app",
     "productName": "Blue Pos",
+    "icon": "build/icon.ico",
     "publish": [
       {
         "provider": "github",
         "owner": "zizicode",
         "repo": "blue-pos"
       }
-    ]
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${name}-${version}-setup.${ext}"
+    },
+    "nsis": {
+      "createDesktopShortcut": true,
+      "shortcutName": "Blue Pos",
+      "uninstallDisplayName": "Blue Pos"
+    }
   }
 }
