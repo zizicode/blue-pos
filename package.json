@@ -52,8 +52,8 @@
   },
   "build": {
     "appId": "com.bluepos.app",
-    "productName": "Blue Pos",
-    "icon": "build/icon.ico",
+    "productName": "Blue-Pos",
+    "icon": "resources/icon.ico",
     "publish": [
       {
         "provider": "github",
