@@ -1,0 +1,62 @@
+/* Cerca de tu splash.html, por ejemplo, en src/renderer/splash.css */
+body {
+    background-color: transparent; /* Un color de fondo */
+    color: black;
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
+    /* 🛑 Propiedad de redondeo */
+    border-radius: 15px; /* Ajusta este valor al radio deseado */
+    
+    /* Opcional: Para asegurar que el borde no se "escape" si hay scroll */
+    overflow: hidden; 
+}
+
+#splash-container {
+    width: 100%;
+    text-align: center;
+    background-color: white; /* Un color de fondo */
+    color: black;
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
+    /* 🛑 Propiedad de redondeo */
+    border-radius: 6px; /* Ajusta este valor al radio deseado */
+    
+    /* Opcional: Para asegurar que el borde no se "escape" si hay scroll */
+    overflow: hidden; 
+}
+
+img{
+    width: 7rem;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+/* Ejemplo de Spinner CSS simple */
+.spinner {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin .5s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,108 +1,53 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.ico?asset'
-import { autoUpdater } from 'electron-updater'
+import { app, ipcMain, BrowserWindow } from 'electron'
+import { electronApp } from '@electron-toolkit/utils'
+// 🔄 Importa las nuevas funciones
+import {
+  createSplashWindow,
+  createWindow,
+  closeSplashWindow,
+} from './windowManager'
+import { registerIpcHandlers, unregisterIpcHandlers } from './api/ipc'
+import { initAutoUpdater } from './updater'
 
-let mainWindow: BrowserWindow | null = null
+// --- 🧠 SECUENCIA DE INICIO CON CARGA ---
+function initAppSequence() {
+  // 1. Mostrar la Splash Screen
+  createSplashWindow()
 
-function createWindow(): void {
-  mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+  // 2. ⏳ Simular carga / Lógica de precarga
+  // Aquí es donde iría la lógica asíncrona real (conexión a DB, etc.)
+  setTimeout(() => {
+    // 3. Cerrar la Splash Screen
+    closeSplashWindow()
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow?.show()
-  })
+    // 4. Crear y mostrar la Ventana Principal
+    createWindow()
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  // Cargar la app
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
-  // Iniciar comprobación de actualizaciones
-  initAutoUpdater()
-}
-
-// --- 🧠 CONFIGURAR AUTO-UPDATER ---
-function initAutoUpdater() {
-  autoUpdater.autoDownload = true
-  autoUpdater.autoInstallOnAppQuit = true
-
-  // Evita el error de tipo con verificación segura
-  const log = require('electron-log')
-  if (autoUpdater.logger) {
-    autoUpdater.logger = log
-    ;(autoUpdater.logger as typeof log).transports.file.level = 'info'
-  }
-
-  autoUpdater.on('checking-for-update', () => {
-    console.log('🟡 Buscando actualizaciones...')
-  })
-
-  autoUpdater.on('update-available', () => {
-    console.log('🟢 Nueva actualización disponible. Descargando...')
-  })
-
-  autoUpdater.on('update-not-available', () => {
-    console.log('✅ La aplicación está actualizada.')
-  })
-
-  autoUpdater.on('error', (err) => {
-    console.error('❌ Error al buscar actualizaciones:', err)
-  })
-
-  autoUpdater.on('update-downloaded', () => {
-    console.log('📦 Actualización descargada. Preguntando al usuario...')
-    dialog
-      .showMessageBox({
-        type: 'info',
-        title: 'Actualización disponible',
-        message: 'Se ha descargado una nueva versión. ¿Deseas reiniciar ahora para actualizar?',
-        buttons: ['Reiniciar', 'Más tarde']
-      })
-      .then((result) => {
-        if (result.response === 0) {
-          autoUpdater.quitAndInstall()
-        }
-      })
-  })
-
-  autoUpdater.checkForUpdates()
+    // 5. Iniciar comprobación de actualizaciones (u otras tareas de fondo)
+    initAutoUpdater()
+    registerIpcHandlers()
+  }, 3000) // 👈 3000 ms = 3 segundos de simulación
 }
 
 // --- 🪟 INICIO DE APP ---
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron.bluepost')
-  app.setAppUserModelId('com.electron.bluepost')
-  app.on('browser-window-created', (_, window) => optimizer.watchWindowShortcuts(window))
+  app.setAppUserModelId('com.electron.bluepost') 
 
   ipcMain.on('ping', () => console.log('pong'))
 
-  createWindow()
+  // 🛑 Llama a la secuencia de inicio
+  initAppSequence()
 
   app.on('activate', function () {
+    // Si la ventana principal se ha cerrado, la recreamos
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    unregisterIpcHandlers()
     app.quit()
   }
 })
