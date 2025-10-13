@@ -1,6 +1,6 @@
 {
   "name": "blue-pos",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -50,34 +50,35 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.6"
   },
-"build": {
-  "appId": "com.bluepos.app",
-  "productName": "Blue Pos",
-  "icon": "build/icon.ico",
-  "publish": [
-    {
-      "provider": "github",
-      "owner": "zizicode",
-      "repo": "blue-pos"
-    }
-  ],
-  "win": {
-    "target": [
+  "build": {
+    "appId": "com.bluepos.app",
+    "productName": "Blue Pos",
+    "icon": "build/icon.ico",
+    "publish": [
       {
-        "target": "nsis",
-        "arch": ["x64"]
+        "provider": "github",
+        "owner": "zizicode",
+        "repo": "blue-pos"
       }
     ],
-    "artifactName": "${productName}-${version}-setup.${ext}"
-  },
-  "nsis": {
-    "oneClick": false,
-    "perMachine": true,
-    "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": true,
-    "shortcutName": "Blue Pos",
-    "uninstallDisplayName": "Blue Pos"
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Blue Pos",
+      "uninstallDisplayName": "Blue Pos"
+    }
   }
-}
-
 }
