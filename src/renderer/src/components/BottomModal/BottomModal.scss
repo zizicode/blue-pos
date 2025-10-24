@@ -1,0 +1,79 @@
+.bottom-modal-overlay {
+  position: fixed; // ← antes era absolute
+  inset: 0;
+  background-color: rgba($black, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  opacity: 0;
+  visibility: hidden;
+  z-index: $z-modal;
+  transition: opacity $transition-base, visibility $transition-base;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.bottom-modal {
+  position: fixed; // ← aseguras que siempre esté al fondo de la pantalla
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  background-color: $white;
+  border-radius: $radius-xl $radius-xl 0 0;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: $container-max-width;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform $transition-slow;
+
+  &.open {
+    transform: translate(-50%, 0);
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-4;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    background-color: $gray-50;
+    border-top: 1px solid $border-color-light;
+  }
+
+  &__loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-8;
+    color: $gray-600;
+    font-size: $font-size-sm;
+
+    .spinner {
+      width: 26px;
+      height: 26px;
+      border: 2px solid $gray-200;
+      border-top-color: $primary;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: $spacing-3;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

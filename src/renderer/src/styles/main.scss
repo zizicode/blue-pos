@@ -1,0 +1,82 @@
+@use './ui.scss' as *;
+
+// ======================================================
+// SCROLL GLOBAL ULTRA FINO Y MINIMALISTA
+// ======================================================
+
+$scroll-thumb: rgba($primary-lightest, 0.25);
+$scroll-thumb-hover: rgba($primary-lightest, 0.6);
+$scroll-width: 4px;
+$scroll-radius: $radius-full;
+
+// 🌐 Scroll global
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #{$scroll-thumb} transparent;
+
+  &::-webkit-scrollbar {
+    width: $scroll-width;
+    height: $scroll-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scroll-thumb;
+    border-radius: $scroll-radius;
+    transition: background $transition-fast;
+
+    &:hover {
+      background-color: $scroll-thumb-hover;
+    }
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body, html{
+    position: relative;
+    min-width: 100vw;
+    min-height: 100vh;
+    width: 100%;
+    max-width: calc(100vw);
+    max-height: calc(100vh);
+}
+
+body {
+    position: relative;
+    overflow: hidden;
+    font-family: $font-family-primary;
+    color: $gray-800;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('../assets/wavy-lines.svg');
+    background-size: cover;
+    background-position: center;
+    z-index: -2; /* fondo base */
+  }
+  
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-color: rgba(219, 234, 254, 0.203);
+    backdrop-filter: blur(3px); /* visible ahora */
+    z-index: -1; /* capa de blur encima del fondo */
+  }

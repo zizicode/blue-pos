@@ -1,0 +1,121 @@
+
+type SectionType = 'Productos' | 'Categorias' | 'Proveedores';
+
+interface TabConfig {
+    id: SectionType;
+    label: string;
+    component: React.ReactNode;
+}
+
+
+const Productos: React.FC = () => {
+
+    const { categorias, productos, proveedores } = usePOSStore();
+    const [activeSection, setActiveSection] = React.useState<SectionType>('Productos');
+
+    const tabs: TabConfig[] = useMemo(() => [
+        {
+            id: 'Productos',
+            label: 'Productos',
+            component: <ItemsProductos />,
+        },
+        {
+            id: 'Categorias',
+            label: 'Categorías',
+            component: <Categorias />,
+        },
+        {
+            id: 'Proveedores',
+            label: 'Proveedores',
+            component: <Proveedores />,
+        },
+    ], [productos, categorias, proveedores]);
+
+    const stats = useMemo(() => {
+        const totalProductos = productos?.length || 0;
+        const productosActivos = productos?.filter(p => p.activo).length || 0;
+        const stockBajo = productos?.filter(p => p.stock_actual <= p.stock_minimo).length || 0;
+        const totalCategorias = categorias?.length || 0;
+
+        return [
+            {
+                title: 'Total Productos',
+                value: totalProductos,
+                icon: <Shirt />,
+                color: 'blue',
+            },
+            {
+                title: 'Productos Activos',
+                value: productosActivos,
+                icon: <BadgeCheck />,
+                color: 'green',
+            },
+            {
+                title: 'Stock Bajo',
+                value: stockBajo,
+                icon: <TriangleAlert />,
+                color: 'orange',
+            },
+            {
+                title: 'Categorías',
+                value: totalCategorias,
+                icon: '📂',
+                color: 'purple',
+            },
+        ];
+    }, [productos, categorias]);
+
+    const handleOpenModal = () => {
+        console.log('Abrir modal de creación de producto');
+        // TODO: Implementar lógica del modal
+    };
+
+
+    const handleTabChange = (section: SectionType) => {
+        setActiveSection(section);
+    };
+
+    const activeComponent = useMemo(() => {
+        const tab = tabs.find(t => t.id === activeSection);
+        return tab?.component;
+    }, [activeSection, tabs]);
+
+    return (
+        <div className="productos">
+            <Head
+                title="Productos"
+                subtitle="Gestión de productos y tu stock"
+                buttons={[
+                    {
+                        label: 'Agregar un producto',
+                        onClick: handleOpenModal,
+                        icon: <Plus size={16} />,
+                        className: 'btn-primary',
+                    },
+                ]}
+            />
+
+            <StartCard cards={stats} />
+
+            <div className="control-section">
+                <div className="navegator">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            className={activeSection === tab.id ? 'activo' : ''}
+                            onClick={() => handleTabChange(tab.id)}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="render_component">
+                    {activeComponent}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Productos;

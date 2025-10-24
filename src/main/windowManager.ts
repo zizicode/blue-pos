@@ -43,8 +43,13 @@ export function closeSplashWindow(): void {
 
 export function createWindow(): void {
     mainWindow = new BrowserWindow({
-        width: 900,
-        height: 670,
+        width: 1280,
+        height: 800,
+        minWidth: 1024,
+        minHeight: 600,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        resizable: true,
         show: false,
         autoHideMenuBar: true,
         ...(process.platform === 'linux' ? { icon } : {}),

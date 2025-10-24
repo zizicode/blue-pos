@@ -1,0 +1,325 @@
+
+// Variables locales basadas en tu sistema de diseño
+$primary-darkest: #0A1628;
+$primary-dark: #1E3A8A;
+$primary: #2563EB;
+$primary-light: #3B82F6;
+$primary-lighter: #60A5FA;
+$primary-pale: #DBEAFE;
+
+$white: #FFFFFF;
+$gray-50: #F9FAFB;
+$gray-100: #F3F4F6;
+$gray-200: #E5E7EB;
+$gray-300: #D1D5DB;
+$gray-500: #6B7280;
+$gray-600: #4B5563;
+$gray-700: #374151;
+$gray-900: #111827;
+
+$error: #EF4444;
+$error-dark: #991B1B;
+$error-pale: #FEE2E2;
+
+$font-size-xs: 0.6875rem;
+$font-size-sm: 0.8125rem;
+$font-size-base: 0.875rem;
+$font-size-lg: 1rem;
+$font-size-xl: 1.125rem;
+$font-size-2xl: 1.25rem;
+
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$spacing-2: 0.5rem;
+$spacing-3: 0.75rem;
+$spacing-4: 1rem;
+$spacing-5: 1.25rem;
+$spacing-6: 1.5rem;
+$spacing-8: 2rem;
+
+$radius-base: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-xl: 1rem;
+$radius-full: 9999px;
+
+$shadow-lg: 0 10px 15px -3px rgba(#000000, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(#000000, 0.1);
+
+$transition-base: 200ms ease-in-out;
+$transition-slow: 300ms ease-in-out;
+
+// ============================================
+// LOADING SCREEN - MODO BLANCO MINIMALISTA
+// ============================================
+
+.loading {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $white;
+  animation: fadeIn 0.3s ease-in;
+
+  &.error-screen {
+    background: linear-gradient(135deg, $error-pale 0%, rgba($error-pale, 5%) 100%);
+  }
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-4;
+  padding: $spacing-8 $spacing-6;
+  background: $white;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-xl;
+  border: 1px solid $gray-200;
+  max-width: 380px;
+  width: 90%;
+  animation: slideUp 0.4s ease-out;
+}
+
+// ============================================
+// SPINNER
+// ============================================
+.loading-spinner {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  border-radius: $radius-full;
+  box-shadow: 0 4px 12px rgba($primary, 0.25);
+}
+
+.spinner-icon {
+  width: 32px;
+  height: 32px;
+  color: $white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// TEXTOS
+// ============================================
+.loading-title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $gray-900;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.loading-step {
+  font-size: $font-size-sm;
+  color: $primary;
+  font-weight: $font-weight-medium;
+  margin: 0;
+  text-align: center;
+  min-height: 18px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// ============================================
+// BARRA DE PROGRESO
+// ============================================
+.progress-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: $gray-200;
+  border-radius: $radius-full;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $primary 0%, $primary-light 100%);
+  border-radius: $radius-full;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba($primary, 0.3);
+}
+
+.progress-text {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $primary;
+  text-align: center;
+  margin: 0;
+}
+
+// ============================================
+// LISTA DE PASOS - OCULTA
+// ============================================
+.loading-steps {
+  display: none; // Ocultamos la lista de pasos
+}
+
+.step-item {
+  display: none;
+}
+
+.step-icon {
+  display: none;
+}
+
+.step-description {
+  display: none;
+}
+
+// ============================================
+// ERROR STYLES
+// ============================================
+.error-icon {
+  width: 56px;
+  height: 56px;
+  color: $error;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+.error-title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $error;
+  margin: 0;
+  text-align: center;
+}
+
+.error-message {
+  font-size: $font-size-sm;
+  color: $gray-600;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+.retry-button {
+  margin-top: $spacing-3;
+  padding: $spacing-3 $spacing-6;
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  color: $white;
+  border: none;
+  border-radius: $radius-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-base;
+  box-shadow: 0 2px 8px rgba($primary, 0.25);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($primary, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+}
+
+// ============================================
+// ANIMACIONES
+// ============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (max-width: 640px) {
+  .loading-content {
+    padding: $spacing-6 $spacing-5;
+    max-width: 95%;
+  }
+
+  .loading-title {
+    font-size: $font-size-lg;
+  }
+
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+  }
+
+  .spinner-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .error-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .error-message {
+    font-size: $font-size-xs;
+  }
+}

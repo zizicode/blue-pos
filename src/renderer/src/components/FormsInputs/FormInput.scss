@@ -1,0 +1,399 @@
+
+// ==================== GRID CONTAINER ====================
+.FormInput__grid {
+  display: grid;
+  width: 100%;
+  
+  // Gaps
+  &.gap-sm {
+    gap: $spacing-2;
+  }
+  
+  &.gap-md {
+    gap: $spacing-3;
+  }
+  
+  &.gap-lg {
+    gap: $spacing-4;
+  }
+  
+  // Responsive
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.FormInput__cell {
+  min-width: 0; // Previene overflow
+}
+
+// ==================== FIELD CONTAINER ====================
+.FormInput__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+  
+  &.compact {
+    gap: 0;
+    
+    .FormInput__label {
+      margin-bottom: $spacing-1;
+    }
+  }
+  
+  &.has-error {
+    .FormInput__input,
+    .FormInput__select,
+    .FormInput__textarea {
+      border-color: $error;
+      
+      &:focus {
+        border-color: $error;
+        box-shadow: 0 0 0 3px rgba($error, 0.1);
+      }
+    }
+  }
+}
+
+// ==================== LABEL ====================
+.FormInput__label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  line-height: $line-height-tight;
+}
+
+.FormInput__required {
+  color: $error;
+  font-size: $font-size-sm;
+}
+
+// ==================== INPUT WRAPPER ====================
+.FormInput__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.FormInput__icon {
+  position: absolute;
+  left: $spacing-3;
+  display: flex;
+  align-items: center;
+  color: $gray-400;
+  pointer-events: none;
+  z-index: 1;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// ==================== TEXT & NUMBER INPUT ====================
+.FormInput__input {
+  width: 100%;
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-sm;
+  font-family: $font-family-primary;
+  color: $gray-800;
+  background: $white;
+  border: $border-width-thin solid $border-color-base;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  line-height: $line-height-normal;
+  
+  &.has-icon {
+    padding-left: $spacing-9;
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+  
+  &:hover:not(:disabled) {
+    border-color: $gray-400;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &:disabled {
+    background: $gray-50;
+    color: $gray-500;
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: $error;
+  }
+  
+  // Number input - ocultar flechas
+  &[type='number'] {
+    // -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+// ==================== PASSWORD TOGGLE ====================
+.FormInput__toggle-password {
+  position: absolute;
+  right: $spacing-2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-1;
+  background: transparent;
+  border: none;
+  color: $gray-400;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+  
+  &:hover {
+    color: $gray-600;
+    background: $gray-100;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ==================== TEXTAREA ====================
+.FormInput__textarea {
+  flex: 1;
+  padding: $spacing-2 $spacing-3;
+  font-size: $font-size-sm;
+  font-family: $font-family-primary;
+  color: $gray-800;
+  background: $white;
+  border: $border-width-thin solid $border-color-base;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  line-height: $line-height-normal;
+  resize: vertical;
+  min-height: 70px;
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+  
+  &:hover:not(:disabled) {
+    border-color: $gray-400;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &:disabled {
+    background: $gray-50;
+    color: $gray-500;
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: $error;
+  }
+}
+
+// ==================== SELECT ====================
+.FormInput__select {
+  width: 100%;
+  padding: $spacing-2 $spacing-8 $spacing-2 $spacing-3;
+  font-size: $font-size-sm;
+  font-family: $font-family-primary;
+  color: $gray-800;
+  background: $white;
+  border: $border-width-thin solid $border-color-base;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-3 center;
+  
+  &.has-icon {
+    padding-left: $spacing-9;
+  }
+  
+  &:hover:not(:disabled) {
+    border-color: $gray-400;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &:disabled {
+    background: $gray-50;
+    color: $gray-500;
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: $error;
+  }
+  
+  option {
+    padding: $spacing-2;
+  }
+}
+
+// ==================== CHECKBOX ====================
+.FormInput__checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  cursor: pointer;
+  user-select: none;
+}
+
+.FormInput__checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  
+  &:checked + .FormInput__checkbox-custom {
+    background: $primary;
+    border-color: $primary;
+  }
+  
+  &:focus + .FormInput__checkbox-custom {
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &:disabled + .FormInput__checkbox-custom {
+    background: $gray-100;
+    border-color: $gray-300;
+    cursor: not-allowed;
+  }
+}
+
+.FormInput__checkbox-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: $border-width-medium solid $border-color-base;
+  border-radius: $radius-sm;
+  background: $white;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+  
+  svg {
+    color: $white;
+    opacity: 0;
+    transform: scale(0);
+    transition: all $transition-fast;
+  }
+  
+  input:checked + & svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  &:hover {
+    border-color: $primary;
+  }
+}
+
+.FormInput__checkbox-label {
+  font-size: $font-size-sm;
+  color: $gray-700;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+}
+
+// ==================== ERROR & HINT ====================
+.FormInput__error {
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  font-size: $font-size-xs;
+  color: $error;
+  font-weight: $font-weight-medium;
+  
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.FormInput__hint {
+  font-size: $font-size-xs;
+  color: $gray-500;
+  line-height: $line-height-tight;
+}
+
+// ==================== COMPACT MODE ====================
+.FormInput__grid.compact {
+  .FormInput__input,
+  .FormInput__select,
+  .FormInput__textarea {
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-size-xs;
+    
+    &.has-icon {
+      padding-left: $spacing-8;
+    }
+  }
+  
+  .FormInput__icon {
+    left: $spacing-2;
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  .FormInput__label {
+    font-size: $font-size-xs;
+  }
+  
+  .FormInput__checkbox-custom {
+    width: 16px;
+    height: 16px;
+    
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+// ==================== ANIMACIONES ====================
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.FormInput__field.has-error {
+  animation: shake 0.3s ease-in-out;
+}

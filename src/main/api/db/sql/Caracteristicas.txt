@@ -1,0 +1,71 @@
+🎯 Capacidades que te permite este sistema:
+Gestión de Usuarios y Seguridad:
+
+Sistema completo de roles y permisos granulares
+Control de acceso por módulo y acción
+Auditoría de todas las operaciones con logs
+Registro de último acceso y eliminación lógica
+
+Inventario Avanzado:
+
+Multi-almacén con stock independiente por ubicación
+Transferencias entre almacenes con estados
+Trazabilidad completa de movimientos (entrada/salida/ajuste)
+Alertas de stock mínimo
+Códigos de barras y códigos personalizados
+Gestión por categorías y unidades de medida
+
+Ventas Completas:
+
+Ventas de contado y crédito
+Descuentos a nivel producto y venta
+Múltiples métodos de pago por venta
+Generación de folios únicos
+Devoluciones con su propio folio
+Asociación de ventas a almacenes específicos
+
+Compras y Proveedores:
+
+Registro completo de compras con folio
+Gestión de proveedores con días de crédito
+Control de precios de compra vs venta
+Actualización automática de inventario
+
+Cuentas por Cobrar:
+
+Control de créditos a clientes
+Límite de crédito configurable
+Abonos parciales con múltiples métodos de pago
+Estados: pendiente/pagada/vencida
+Fechas de vencimiento
+
+Gestión de Clientes:
+
+Clasificación por tipo (general/mayorista/VIP)
+Control de límite y saldo actual
+Historial completo de transacciones
+
+Control de Caja:
+
+Múltiples cajas por almacén
+Turnos con apertura y cierre
+Registro de monto inicial, final y diferencia
+Trazabilidad de todos los movimientos de efectivo
+Conceptos de entrada/salida adicionales
+
+Reportes que puedes generar:
+
+Ventas por periodo, cliente, usuario, producto
+Movimientos de inventario completos
+Estado de cuentas por cobrar
+Corte de caja por turno
+Productos más vendidos
+Análisis de rentabilidad (precio compra vs venta)
+Historial de compras a proveedores
+Auditoría completa de operaciones
+
+Configuración Flexible:
+
+Sistema de configuración con diferentes tipos de datos
+Métodos de pago personalizables
+Categorías y unidades de medida ajustables

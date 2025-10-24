@@ -1,0 +1,104 @@
+.CuentasPorCobrar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  // ==================== DETALLE ====================
+  &__detalle {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+
+    h4 {
+      margin: $spacing-4 0 $spacing-2 0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $gray-800;
+      padding-bottom: $spacing-2;
+      border-bottom: $border-width-thin solid $border-color-light;
+    }
+  }
+}
+
+// ==================== INFO GRID ====================
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-3;
+  padding: $spacing-4;
+  background: $gray-50;
+  border-radius: $radius-md;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  .label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $gray-600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .value {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $gray-900;
+
+    &.success {
+      color: $success;
+    }
+
+    &.warning {
+      color: $warning;
+    }
+
+    &.error {
+      color: $error;
+    }
+  }
+}
+
+// ==================== MODAL ====================
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  padding: $spacing-4;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-3;
+  padding-bottom: $spacing-3;
+  border-bottom: $border-width-thin solid $border-color-light;
+
+  svg {
+    color: $primary;
+    flex-shrink: 0;
+    margin-top: $spacing-1;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $gray-800;
+  }
+}
+
+.modal-subtitle {
+  margin: $spacing-1 0 0 0;
+  font-size: $font-size-sm;
+  color: $gray-600;
+  font-weight: $font-weight-normal;
+
+  strong {
+    color: $gray-800;
+    font-weight: $font-weight-semibold;
+  }
+}

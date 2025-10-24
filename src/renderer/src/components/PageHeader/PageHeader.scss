@@ -1,0 +1,25 @@
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button{
+        padding: .5rem .7rem;
+        border-radius: $radius-sm;
+        border: 1px solid $border-color-light;
+        // background-color: $white;
+        box-shadow: $shadow-base;
+        cursor: pointer;
+
+        display: flex;
+        font-size: .9rem;
+        align-items: center;
+        gap: 10px;
+
+        &:hover{
+            box-shadow: none;
+        }
+    }
+  }
+  

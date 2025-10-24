@@ -1,0 +1,47 @@
+.head {
+    padding: $spacing-6;
+    max-width: $container-max-width;
+    margin: 0 auto;
+  
+    // ============================================
+    // HEADER
+    // ============================================
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-6;
+      flex-wrap: wrap;
+      gap: $spacing-4;
+    }
+  
+    &__title-section {
+      flex: 1;
+      min-width: 250px;
+    }
+  
+    &__title {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $gray-900;
+      margin: 0;
+      margin-bottom: $spacing-2;
+    }
+  
+    &__subtitle {
+      font-size: $font-size-base;
+      color: $gray-600;
+      margin: 0;
+    }
+  
+    &__user-name {
+      font-weight: $font-weight-semibold;
+      color: $primary;
+    }
+  
+    &__actions {
+      display: flex;
+      gap: $spacing-3;
+      align-items: center;
+    }
+}  

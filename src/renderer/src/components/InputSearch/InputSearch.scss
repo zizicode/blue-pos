@@ -1,0 +1,75 @@
+.InputSearch{
+    display: flex;
+    align-items: center;
+    width: max-content;
+
+    .search{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 20px auto;
+        padding: .2rem .4rem ;
+        border: 1px solid $border-color-light;
+        border-radius: $radius-md;
+        box-shadow: $shadow-base;
+        transition: border 400ms ease-out;
+
+        &.active{
+            border-color: $primary-darkest;
+            transition: border 400ms ease-out;
+
+            &>svg{
+                color: $primary-darkest;
+            }
+        }
+
+        &>svg{
+            width: 16px;
+            color: $gray-400;
+        }
+
+        input{
+            width: 100%;
+            outline: none;
+            border: none;
+        }
+    }
+
+    .result-search{
+        position: absolute;
+        width: calc(100% - 4rem);
+        height: calc(100vh - (50px));
+        transform: translateX(-1rem);
+        background-color: $white !important;
+        z-index: 10000;
+        top: 51px;
+        padding: 1rem;
+        transition: opacity $transition-fast;
+        opacity: 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &>h2{
+            margin-bottom: 1rem;
+            color: $gray-300;
+        }
+
+        .notResult{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: $gray-600;
+
+            & > svg{
+                font-size: 2rem;
+            }
+        }
+
+        &.active{
+            opacity: 1;
+        }
+    }
+}

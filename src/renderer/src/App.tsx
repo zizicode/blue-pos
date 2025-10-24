@@ -1,94 +1,53 @@
-// src/renderer/src/App.tsx
+import { Route, Routes } from 'react-router-dom';
+import Layout from './layout/layout';
+import Auth from './modules/auth/Auth';
+import Dashboard from './modules/app/Dashboard/Dashboard';
 
-import { useState } from 'react'
+import AuthRoute from './modules/auth/AuthRoute';
+import ProtectedRoute from './modules/auth/ProtectedRout';
+import Settings from './modules/app/Settings/Settings';
+import Caja from './modules/app/Caja/Caja';
+import Inventario from './modules/app/Inventario/Inventario';
+import Almacenes from './modules/app/Inventario/Almacenes/Almacenes';
+import Producto from './modules/app/Producto/Producto';
+import Usuarios from './modules/app/Usuarios/Usuarios';
+import CuentasPorCobrar from './modules/app/Cuentas/CuentasPorCobrar';
+import Ventas from './modules/app/Ventas/Ventas';
+import NotFound from './modules/NotFound';
+import Clientes from './modules/app/Clientes/Clientes';
 
-function App() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
-
-  // ✅ Login
-  const handleLogin = async () => {
-    const result = await window.api.call('auth', 'login', {
-      username,
-      password
-    })
-    
-    if (result.success) {
-      setMessage(`Bienvenido ${result.data?.username}!`)
-    } else {
-      setMessage(`Error: ${result.message}`)
-    }
-  }
-
-  // ✅ Obtener todos los usuarios
-  const handleGetUsers = async () => {
-    const result = await window.api.call('users', 'getAll')
-    
-    if (result.success) {
-      console.log('Usuarios:', result.data)
-      setMessage(`Se encontraron ${result.data?.length} usuarios`)
-    } else {
-      setMessage(`Error: ${result.message}`)
-    }
-  }
-
-  // ✅ Crear usuario
-  const handleCreateUser = async () => {
-    const result = await window.api.call('users', 'create', {
-      username: 'nuevoUsuario',
-      password: 'password123',
-      email: 'nuevo@ejemplo.com'
-    })
-    
-    if (result.success) {
-      setMessage(`Usuario creado con ID: ${result.data?.id}`)
-    } else {
-      setMessage(`Error: ${result.message}`)
-    }
-  }
-
-  // ✅ Ejemplo: Crear un producto (sin necesidad de crear el controlador primero)
-  const handleCreateProduct = async () => {
-    const result = await window.api.call('products', 'create', {
-      name: 'Laptop',
-      price: 1000,
-      stock: 50
-    })
-    
-    if (result.success) {
-      setMessage(`Producto creado: ${result.data?.id}`)
-    } else {
-      setMessage(`Error: ${result.message}`)
-    }
-  }
-
+const App = () => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Login</h1>
-      
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleGetUsers}>Ver Usuarios</button>
-      <button onClick={handleCreateUser}>Crear Usuario</button>
-      <button onClick={handleCreateProduct}>Crear Producto</button>
-      
-      {message && <p>{message}</p>}
-    </div>
-  )
+    <Routes>
+      {/* Rutas de autenticación */}
+      <Route path="/auth" element={
+        <AuthRoute>
+          <Auth />
+        </AuthRoute>
+      }/>
+
+      {/* Layout protegido */}
+      <Route element={<ProtectedRoute><Layout/></ProtectedRoute>}>
+        <Route index element={<Dashboard />} />
+        <Route path="ventas" element={<Ventas />} />
+        <Route path="caja" element={<Caja />} />
+        <Route path="productos" element={<Producto />} />
+        <Route path="cuentas" element={<CuentasPorCobrar />} />
+        <Route path="clientes" element={<Clientes />} />
+        
+        <Route path="inventario" element={<Inventario />}>
+          <Route path="almacenes" element={<Almacenes />} />
+        </Route>
+
+        <Route path="usuarios" element={<Usuarios />} />
+        <Route path="configuracion" element={<Settings />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

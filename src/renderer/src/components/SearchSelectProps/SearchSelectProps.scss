@@ -1,0 +1,78 @@
+.search-select {
+  position: relative;
+  width: 100%;
+
+  .search-select-input {
+    flex: 1;
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-base;
+    border: 1px solid $border-color-base;
+    border-radius: $radius-md; // menos redondeado para matching UI
+    outline: none;
+    transition: border-color $transition-base, box-shadow $transition-base;
+    background-color: $white;
+    color: $gray-800;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.15);
+    }
+
+    &:disabled {
+      background-color: $gray-100;
+      cursor: not-allowed;
+    }
+  }
+
+  .search-select-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: $z-dropdown;
+    background: $white;
+    border: 1px solid $border-color-light;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+    max-height: 200px; // menos alto
+    overflow-y: auto;
+    padding: $spacing-1 0; // deja espacio más sutil
+    animation: fadeIn $transition-base;
+
+    // scrollbar sutil
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $gray-300;
+      border-radius: $radius-full;
+    }
+  }
+
+  .search-select-item {
+    padding: $spacing-2 $spacing-3;
+    font-size: $font-size-sm; // más compacto
+    color: $gray-700;
+    cursor: pointer;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    &:hover {
+      background-color: $primary-pale-gray-hover;
+      color: $primary-dark;
+    }
+
+    // opcional por si luego marcas seleccionado
+    &.active {
+      background-color: $primary-pale;
+      color: $primary-dark;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .search-select-empty {
+    padding: $spacing-2 $spacing-3;
+    color: $gray-500;
+    text-align: center;
+    font-size: $font-size-sm;
+  }
+}

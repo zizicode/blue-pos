@@ -1,0 +1,120 @@
+.StartCard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+    width: 100%;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+  
+    .StartCard__start-card {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1rem;
+      background: #ffffff;
+      border-radius: 0.8rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 0.8rem 1rem;
+      transition: all 0.25s ease-in-out;
+      min-height: 80px;
+  
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      }
+  
+      &_icon {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #e6f0ff; // azul muy suave
+        color: #1e63e9; // azul principal
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+      }
+  
+      .StartCard__start_content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+  
+        span.badge {
+          position: absolute;
+          top: -15px;
+          right: 0;
+          background: $gray-200;
+          color: $gray-900;
+          font-size: 0.5rem;
+          font-weight: 500;
+          padding: 0.12rem 0.37rem;
+          border-radius: 0.4rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+
+          &-success{
+            background-color: rgba($success, 0.8);
+            color: $white;
+          }
+
+          &-error{
+            background-color: rgba($error, 0.8);
+            color: $white;
+          }
+        }
+  
+        p {
+          margin: 0;
+          font-size: 0.85rem;
+          color: $gray-700;
+          font-weight: 500;
+        }
+  
+        .value {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #000;
+          margin-top: 0.15rem;
+        }
+  
+        span:not(.badge) {
+          font-size: 0.70rem;
+          font-weight: 400;
+          color: #666;
+          margin-top: 0.2rem;
+        }
+      }
+    }
+  
+    // Responsive ajustes
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  
+      .StartCard__start-card {
+        min-height: 80px;
+        padding: 0.7rem 0.8rem;
+  
+        &_icon {
+          width: 42px;
+          height: 42px;
+          font-size: 1.4rem;
+        }
+  
+        .StartCard__start_content {
+          p {
+            font-size: 0.9rem;
+          }
+          .value {
+            font-size: 1.1rem;
+          }
+          span:not(.badge) {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+  

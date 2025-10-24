@@ -1,0 +1,34 @@
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    .form-input {
+      flex: 1;
+    }
+    
+    .input-prefix,
+    .input-suffix {
+      position: absolute;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: $gray-600;
+      pointer-events: none;
+    }
+    
+    .input-prefix {
+      left: 0.75rem;
+      
+      ~ .form-input {
+        padding-left: 2rem;
+      }
+    }
+    
+    .input-suffix {
+      right: 0.75rem;
+      
+      ~ .form-input {
+        padding-right: 2.5rem;
+      }
+    }
+  }

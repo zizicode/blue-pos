@@ -1,0 +1,136 @@
+.options-menu {
+  position: relative;
+  display: inline-block;
+
+  &__trigger {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    padding: 0;
+
+    &:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    &:active {
+      background: #e5e7eb;
+      transform: scale(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__dropdown {
+    position: fixed;
+    min-width: 180px;
+    max-width: 240px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 9999;
+    padding: 4px 0;
+    overflow: hidden;
+
+    // &--upwards {
+    //   // Se maneja con JavaScript calculando la posición
+    // }
+
+    // &--left {
+    //   // Se maneja con JavaScript calculando la posición
+    // }
+  }
+
+  &__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    &:active {
+      background: #f3f4f6;
+    }
+
+    &--danger {
+      color: #dc2626;
+
+      &:hover {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .options-menu__icon {
+        color: #dc2626;
+      }
+    }
+
+    &--warning {
+      color: #d97706;
+
+      &:hover {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .options-menu__icon {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  &__icon {
+    font-size: 16px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: color 0.15s ease;
+  }
+
+  &__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 4px 0;
+  }
+}

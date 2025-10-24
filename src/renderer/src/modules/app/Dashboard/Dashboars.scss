@@ -1,0 +1,313 @@
+// ==================== VARIABLES ====================
+$primary-color: #3b82f6;
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$error-color: #ef4444;
+$info-color: #06b6d4;
+
+$bg-primary: #ffffff;
+$bg-secondary: #f9fafb;
+$border-color: #e5e7eb;
+$text-primary: #111827;
+$text-secondary: #6b7280;
+
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+$radius-sm: 0.375rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
+// ==================== MIXINS ====================
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin card {
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+// ==================== DASHBOARD ====================
+.dashboard {
+  padding: $spacing-lg;
+  background: $bg-secondary;
+  position: relative;
+  overflow: hidden;
+
+  // ==================== USER NAME ====================
+  .user-name {
+    font-weight: 600;
+    color: $primary-color;
+    text-transform: capitalize;
+  }
+
+  // ==================== ALERTS ====================
+  .dashboard-alerts {
+    margin-bottom: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .alert {
+      @include card;
+      padding: $spacing-md $spacing-lg;
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      border-left: 4px solid;
+
+      svg {
+        flex-shrink: 0;
+      }
+
+      div {
+        flex: 1;
+        
+        strong {
+          font-weight: 600;
+          margin-right: $spacing-xs;
+        }
+      }
+
+      &.alert-warning {
+        background: #fffbeb;
+        border-left-color: $warning-color;
+        color: #92400e;
+
+        svg {
+          color: $warning-color;
+        }
+      }
+
+      &.alert-error {
+        background: #fef2f2;
+        border-left-color: $error-color;
+        color: #991b1b;
+
+        svg {
+          color: $error-color;
+        }
+      }
+
+      &.alert-info {
+        background: #eff6ff;
+        border-left-color: $info-color;
+        color: #1e40af;
+
+        svg {
+          color: $info-color;
+        }
+      }
+
+      &.alert-success {
+        background: #f0fdf4;
+        border-left-color: $success-color;
+        color: #166534;
+
+        svg {
+          color: $success-color;
+        }
+      }
+    }
+  }
+
+  // ==================== QUICK STATS ====================
+  .dashboard-quick-stats {
+    margin-top: $spacing-xl;
+    @include card;
+    padding: $spacing-lg;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-lg;
+
+    .quick-stat {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+      padding: $spacing-md;
+      background: $bg-secondary;
+      border-radius: $radius-md;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f3f4f6;
+        transform: translateY(-2px);
+      }
+
+      .quick-stat-label {
+        font-size: 0.875rem;
+        color: $text-secondary;
+        font-weight: 500;
+      }
+
+      .quick-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-primary;
+      }
+    }
+  }
+
+  // ==================== LOADING STATE ====================
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+// ==================== ICONOS CON COLORES ====================
+.icon-primary {
+  color: $primary-color;
+}
+
+.icon-success {
+  color: $success-color;
+}
+
+.icon-warning {
+  color: $warning-color;
+}
+
+.icon-error {
+  color: $error-color;
+}
+
+.icon-info {
+  color: $info-color;
+}
+
+// ==================== BADGES ====================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.badge--success {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.badge--warning {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.badge--error {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &.badge--info {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.badge--blue {
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+}
+
+// ==================== BOTONES ====================
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $radius-md;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.btn-primary {
+  background: $primary-color;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: $bg-primary;
+  color: $text-primary;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: $bg-secondary;
+    border-color: #d1d5db;
+  }
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 768px) {
+  .dashboard {
+    padding: $spacing-md;
+
+    .dashboard-quick-stats {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    padding: $spacing-sm;
+
+    .dashboard-alerts {
+      .alert {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+      }
+    }
+  }
+}

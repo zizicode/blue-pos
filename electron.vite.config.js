@@ -14,6 +14,13 @@ export default defineConfig({
                 '@renderer': resolve('src/renderer/src')
             }
         },
-        plugins: [react()]
+        plugins: [react()],
+        css: {
+            preprocessorOptions: {
+              scss: {
+                additionalData: `@use "@renderer/styles/variables.scss" as *;`,
+              },
+            }
+          }
     }
 });

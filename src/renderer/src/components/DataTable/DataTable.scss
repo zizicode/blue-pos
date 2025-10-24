@@ -1,0 +1,520 @@
+// ============================================
+// DATA TABLE COMPONENT - CON SELECCIÓN
+// ============================================
+.data-table {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-base;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  // Header Section
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-5 $spacing-6;
+    border-bottom: 1px solid $gray-200;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__title-section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__default-icon {
+    width: 40px;
+    height: 40px;
+    background: $primary;
+    border-radius: $radius-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $gray-800;
+    margin: 0;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+
+    @media (max-width: 640px) {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  // Search Section
+  &__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 250px;
+
+    @media (max-width: 640px) {
+      min-width: 100%;
+    }
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: $spacing-3;
+    color: $gray-400;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: $spacing-2 $spacing-3 $spacing-2 calc(#{$spacing-3} + 24px);
+    border: 1px solid $gray-300;
+    border-radius: $radius-base;
+    font-size: $font-size-sm;
+    color: $gray-700;
+    transition: all $transition-base;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    @media (max-width: 640px) {
+      width: 100%;
+      justify-content: stretch;
+
+      > * {
+        flex: 1;
+      }
+    }
+  }
+
+  // ============================================
+  // ACTION BAR (aparece cuando hay selección)
+  // ============================================
+  &__action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-3 $spacing-6;
+    background: linear-gradient(to right, $primary-pale, rgba($primary-pale, .3));
+    border-bottom: 1px solid rgba($primary-pale, .5);
+    gap: $spacing-4;
+    animation: slideDown 0.3s ease-out;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__action-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__action-count {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $primary-dark;
+  }
+
+  &__action-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: $white;
+    border: 1px solid $gray-300;
+    border-radius: $radius-sm;
+    color: $gray-600;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-400;
+      color: $gray-800;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+
+  &__action-buttons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  &__action-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-1 $spacing-2;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all $transition-base;
+    white-space: nowrap;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($primary, 0.2);
+    }
+
+    // Variants
+    &--primary {
+      background: $primary;
+      color: $white;
+
+      &:hover {
+        background: rgba($primary-dark, .9);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($primary, 0.3);
+      }
+    }
+
+    &--secondary {
+      background: rgba($gray-600, .8);
+      color: $white;
+
+      &:hover {
+        background: $gray-700;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($gray-600, 0.3);
+      }
+    }
+
+    &--danger {
+      background: rgba($error, .8);
+      color: $white;
+
+      &:hover {
+        background: $error-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($error, 0.3);
+      }
+    }
+
+    &--success {
+      background: rgba($success, .8);
+      color: $white;
+
+      &:hover {
+        background: $success-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($success, 0.3);
+      }
+    }
+  }
+
+  &__action-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // ============================================
+  // CHECKBOX STYLES
+  // ============================================
+  &__checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: $primary;
+    
+    &:focus {
+      outline: 2px solid rgba($primary, 0.4);
+      outline-offset: 2px;
+    }
+  }
+
+  &__th--checkbox,
+  &__td--checkbox {
+    width: 40px;
+    padding: $spacing-3 $spacing-4;
+    text-align: start;
+  }
+
+  // Table Container
+  &__container {
+    overflow: auto;
+    max-height: 600px;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $gray-100;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $gray-300;
+      border-radius: 4px;
+
+      &:hover {
+        background: $gray-400;
+      }
+    }
+  }
+
+  // Table
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+  }
+
+  &__thead {
+    background: $gray-50;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  &__th {
+    padding: $spacing-3 $spacing-4;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $gray-700;
+    border-bottom: 1px solid $gray-200;
+    white-space: nowrap;
+  }
+
+  &__th-content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__sort-button {
+    background: none;
+    border: none;
+    padding: $spacing-1;
+    cursor: pointer;
+    color: $gray-500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $gray-200;
+      color: $primary;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+
+  &__tbody {
+    background: $white;
+  }
+
+  &__tr {
+    transition: background-color $transition-base;
+
+    &:hover {
+      background: $gray-50;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid $gray-200;
+    }
+
+    // Selected row style
+    &--selected {
+      background: $primary-pale !important;
+
+      &:hover {
+        background: rgba($primary-pale, .3) !important;
+      }
+    }
+  }
+
+  &__td {
+    padding: $spacing-4;
+    color: $gray-600;
+    vertical-align: middle;
+  }
+
+  &__empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-6 * 2;
+    min-height: 100px;
+  }
+
+  &__empty-icon {
+    color: $gray-300;
+    margin-bottom: $spacing-4;
+  }
+
+  &__empty-text {
+    font-size: $font-size-base;
+    color: $gray-500;
+    margin: 0;
+  }
+
+  // Footer Section
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-4 $spacing-6;
+    border-top: 1px solid $gray-200;
+    background: $gray-50;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__info {
+    font-size: $font-size-sm;
+    color: $gray-600;
+  }
+
+  // Pagination
+  &__pagination {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    @media (max-width: 768px) {
+      justify-content: center;
+    }
+  }
+
+  &__pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid $gray-300;
+    background: $white;
+    border-radius: $radius-base;
+    color: $gray-600;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover:not(:disabled) {
+      background: $gray-100;
+      border-color: $gray-400;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+
+  &__pagination-pages {
+    display: flex;
+    gap: $spacing-1;
+  }
+
+  &__pagination-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 $spacing-2;
+    border: 1px solid $gray-300;
+    background: $white;
+    border-radius: $radius-base;
+    color: $gray-600;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-400;
+    }
+
+    &--active {
+      background: $primary;
+      border-color: $primary;
+      color: $white;
+
+      &:hover {
+        background: $primary-dark;
+        border-color: $primary-dark;
+      }
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+}

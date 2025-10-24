@@ -1,0 +1,336 @@
+# SISTEMA DE CLASES UI - DOCUMENTACIÓN
+
+## LAYOUT PRINCIPAL
+
+### Sidebar
+- .sidebar                    → Contenedor principal del sidebar
+- .sidebar-open               → Sidebar expandido (260px)
+- .sidebar-closed             → Sidebar colapsado (70px)
+- .sidebar-header             → Encabezado del sidebar
+- .sidebar-logo               → Contenedor del logo
+- .sidebar-nav                → Navegación principal
+- .sidebar-menu-item          → Item de menú individual
+- .sidebar-link               → Enlace de navegación
+- .sidebar-icon               → Icono del enlace
+- .sidebar-label              → Texto del enlace
+- .sidebar-dropdown-trigger   → Trigger para dropdown
+- .sidebar-arrow              → Flecha del dropdown
+- .sidebar-arrow-open         → Flecha rotada (dropdown abierto)
+- .sidebar-submenu            → Submenú desplegable
+- .sidebar-sublink            → Enlace del submenú
+- .sidebar-footer             → Footer del sidebar
+- .sidebar-footer-content     → Contenido del footer
+- .sidebar-footer-info        → Información del footer
+- .sidebar-version            → Versión de la app
+- .sidebar-dev                → Nombre del desarrollador
+- .sidebar-logout-btn         → Botón de cerrar sesión
+- .sidebar-logout-icon        → Icono de logout
+- .sidebar-overlay            → Overlay para mobile
+
+### Logo
+- .logo-icon                  → Icono del logo (42x42px)
+- .logo-text                  → Contenedor de texto del logo
+
+### Navbar
+- .navbar                     → Barra de navegación superior
+- .navbar-left                → Sección izquierda
+- .navbar-toggle              → Botón toggle sidebar
+- .navbar-breadcrumb          → Breadcrumb de navegación
+- .navbar-center              → Sección central (búsqueda)
+- .navbar-search              → Contenedor de búsqueda
+- .navbar-right               → Sección derecha
+- .navbar-quick-actions       → Acciones rápidas
+- .navbar-divider             → Divisor vertical
+- .navbar-notifications       → Botón de notificaciones
+- .navbar-user                → Menú de usuario
+
+### Breadcrumb
+- .breadcrumb-icon            → Icono del breadcrumb
+
+### Search
+- .search-icon                → Icono de búsqueda
+- .search-input               → Input de búsqueda
+- .search-kbd                 → Atajo de teclado
+
+### Quick Actions
+- .quick-action-btn           → Botón de acción rápida
+- .quick-action-label         → Etiqueta del botón
+
+### Notifications
+- .notification-badge         → Badge de notificaciones
+
+### User Menu
+- .user-avatar                → Avatar del usuario (36x36px)
+- .user-info                  → Información del usuario
+- .user-name                  → Nombre del usuario
+- .user-role                  → Rol del usuario
+- .user-menu-backdrop         → Backdrop del menú
+- .user-menu                  → Menú desplegable
+- .user-menu-item             → Item del menú
+- .user-menu-divider          → Divisor del menú
+- .user-menu-danger           → Item peligroso (rojo)
+
+### Layout
+- .layout-main                → Contenedor principal
+- .layout-main-shifted        → Layout con sidebar expandido
+- .layout-content             → Contenido principal
+
+---
+
+## COMPONENTES UI
+
+### Buttons
+- .btn                        → Botón base
+- .btn-primary                → Botón primario (azul)
+- .btn-secondary              → Botón secundario (gris)
+- .btn-success                → Botón éxito (verde)
+- .btn-danger                 → Botón peligro (rojo)
+- .btn-warning                → Botón advertencia (amarillo)
+- .btn-outline                → Botón con borde
+- .btn-ghost                  → Botón transparente
+- .btn-xs                     → Botón extra pequeño
+- .btn-sm                     → Botón pequeño
+- .btn-lg                     → Botón grande
+- .btn-xl                     → Botón extra grande
+- .btn-block                  → Botón ancho completo
+- .btn-icon                   → Botón solo icono
+- .button-grid                → Grid de botones
+
+### Badges
+- .badge                      → Badge base
+- .badge-sm                   → Badge pequeño
+- .badge-md                   → Badge mediano
+- .badge-lg                   → Badge grande
+- .badge-rounded              → Badge redondeado
+- .badge-primary              → Badge primario
+- .badge-secondary            → Badge secundario
+- .badge-success              → Badge éxito
+- .badge-warning              → Badge advertencia
+- .badge-danger               → Badge peligro
+- .badge-info                 → Badge información
+
+### Cards
+- .card                       → Card base
+- .card-hover                 → Card con efecto hover
+- .card-header                → Encabezado de card
+- .card-title                 → Título de card
+- .card-body                  → Cuerpo de card
+- .card-footer                → Footer de card
+- .card-grid                  → Grid de cards
+
+### Card Avatar (Tarjetas de Perfil)
+- .card-avatar                → Card de avatar
+- .card-avatar-header         → Encabezado con gradiente
+- .card-avatar-body           → Cuerpo de la card
+- .card-avatar-footer         → Footer de la card
+- .avatar-container           → Contenedor del avatar
+- .avatar-image               → Imagen del avatar (56x56px)
+- .avatar-placeholder         → Placeholder del avatar
+- .avatar-info                → Información del avatar
+- .avatar-name                → Nombre del usuario
+- .avatar-role                → Rol del usuario
+- .avatar-detail              → Detalle con icono
+- .avatar-badges              → Contenedor de badges
+
+### Modals
+- .modal-overlay              → Overlay del modal
+- .modal-content              → Contenido del modal
+- .modal-sm                   → Modal pequeño (400px)
+- .modal-md                   → Modal mediano (560px)
+- .modal-lg                   → Modal grande (800px)
+- .modal-xl                   → Modal extra grande (1000px)
+- .modal-header               → Encabezado del modal
+- .modal-title                → Título del modal
+- .modal-close                → Botón cerrar
+- .modal-body                 → Cuerpo del modal
+- .modal-footer               → Footer del modal
+
+### Dropdowns
+- .dropdown                   → Contenedor dropdown
+- .dropdown-backdrop          → Backdrop del dropdown
+- .dropdown-menu              → Menú desplegable
+- .dropdown-left              → Alineado a la izquierda
+- .dropdown-right             → Alineado a la derecha
+- .dropdown-item              → Item del dropdown
+- .dropdown-item-danger       → Item peligroso
+- .dropdown-icon              → Icono del item
+- .dropdown-divider           → Divisor del dropdown
+
+### Inputs y Formularios
+- .input-group                → Contenedor de input con label
+- .input-full                 → Input ancho completo
+- .input-label                → Label del input
+- .input-required             → Asterisco de campo requerido
+- .input                      → Input base
+- .input:focus                → Input enfocado (borde azul)
+- .input:disabled             → Input deshabilitado
+- .input-error                → Input con error (borde rojo)
+- .input-error-message        → Mensaje de error
+- .input-select               → Select con flecha personalizada
+- .input-grid                 → Grid responsive de inputs
+
+### Tables
+- .table-container            → Contenedor con scroll horizontal
+- .table                      → Tabla base
+- .table-header               → Encabezado con gradiente
+- .table-header-cell          → Celda del encabezado
+- .table-body                 → Cuerpo de la tabla
+- .table-row                  → Fila de la tabla
+- .table-row:hover            → Fila con hover (fondo gris)
+- .table-cell                 → Celda de datos
+- .table-empty                → Mensaje de tabla vacía
+
+### Content Placeholder
+- .content-placeholder        → Contenedor placeholder
+- .placeholder-icon           → Icono grande
+- .placeholder-cards          → Grid de cards placeholder
+- .placeholder-card           → Card individual
+- .card-icon                  → Icono de la card (52x52px)
+
+---
+
+## MODIFICADORES Y ESTADOS
+
+### Estados de Hover
+- Todos los elementos interactivos tienen estados :hover definidos
+- Transformaciones translateY(-2px a -4px)
+- Cambios de color y sombras
+
+### Estados de Focus
+- Inputs tienen outline con color primario
+- Box-shadow con opacidad 10%
+- Inputs con error tienen box-shadow rojo
+
+### Estados Disabled
+- Opacidad 50%
+- Cursor not-allowed
+- Sin transformaciones
+
+### Animaciones
+- fadeIn                      → Fade in suave
+- slideDown                   → Deslizar hacia abajo
+- slideUp                     → Deslizar hacia arriba
+
+---
+
+## RESPONSIVE BREAKPOINTS
+
+### Desktop (>1024px)
+- Layout completo con sidebar expandido
+- Todos los elementos visibles
+
+### Tablet (768px - 1024px)
+- Sidebar colapsado por defecto
+- Quick actions sin labels
+- Placeholder cards en columna única
+
+### Mobile (480px - 768px)
+- Sidebar overlay
+- Navbar simplificado
+- User info oculto
+- Search oculto
+- Elementos compactos
+
+### Mobile Small (<480px)
+- Elementos aún más compactos
+- Botones full width
+- Dropdowns fixed bottom
+- Padding reducido
+
+---
+
+## PALETA DE COLORES
+
+### Primarios
+- primary-darkest: #0A1628
+- primary-dark: #1E3A8A
+- primary: #2563EB
+- primary-light: #3B82F6
+- primary-lighter: #60A5FA
+- primary-pale: #DBEAFE
+
+### Estados
+- success: #10B981
+- warning: #F59E0B
+- error: #EF4444
+- info: #6366F1
+
+### Neutrales
+- white: #FFFFFF
+- gray-50 a gray-950
+- black: #000000
+
+---
+
+## ESPACIADO
+
+- spacing-1: 4px
+- spacing-2: 8px
+- spacing-3: 12px
+- spacing-4: 16px
+- spacing-5: 20px
+- spacing-6: 24px
+- spacing-8: 32px
+- spacing-10: 40px
+- spacing-12: 48px
+- spacing-16: 64px
+
+---
+
+## TIPOGRAFÍA
+
+### Tamaños
+- font-size-xs: 11px
+- font-size-sm: 13px
+- font-size-base: 14px
+- font-size-md: 15px
+- font-size-lg: 16px
+- font-size-xl: 18px
+- font-size-2xl: 20px
+- font-size-3xl: 24px
+- font-size-4xl: 30px
+
+### Pesos
+- font-weight-light: 300
+- font-weight-normal: 400
+- font-weight-medium: 500
+- font-weight-semibold: 600
+- font-weight-bold: 700
+- font-weight-extrabold: 800
+
+---
+
+## DIMENSIONES CLAVE
+
+- Sidebar abierto: 260px
+- Sidebar cerrado: 70px
+- Navbar altura: 60px
+- Navbar altura mobile: 56px
+- Avatar usuario: 36x36px
+- Avatar card: 56x56px
+- Logo icon: 42x42px
+- Botón toggle: 36x36px
+- Botón toggle mobile: 32x32px
+- Input padding: 8px 12px
+- Input min-width: 250px
+- Table cell padding: 12px 20px
+- Table header padding: 12px 20px
+
+---
+
+## NOTAS DE USO
+
+1. Todos los componentes usan variables SCSS
+2. Transiciones suaves (150-300ms)
+3. Sombras sutiles para profundidad
+4. Border radius consistente
+5. Espaciado basado en múltiplos de 4px
+6. Colores semánticos para estados
+7. Responsive mobile-first
+8. Animaciones con ease-in-out
+9. Z-index organizados por capas
+10. Opacidades estandarizadas (10-100%)
+11. Inputs con estados focus, error y disabled
+12. Tables con hover en filas y scroll horizontal
+13. Select con flecha SVG personalizada
+14. Formularios con grid responsive

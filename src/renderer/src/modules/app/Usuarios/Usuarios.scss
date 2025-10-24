@@ -1,0 +1,33 @@
+.Usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+  
+  // ==================== MODAL CONTENT ====================
+  &__modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    padding: $spacing-4;
+  }
+  
+  &__modal-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding-bottom: $spacing-3;
+    border-bottom: $border-width-thin solid $border-color-light;
+    
+    svg {
+      color: $primary;
+      flex-shrink: 0;
+    }
+    
+    h3 {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $gray-800;
+    }
+  }
+}
