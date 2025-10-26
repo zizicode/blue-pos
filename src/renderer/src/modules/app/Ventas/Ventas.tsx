@@ -8,7 +8,7 @@ import { useAuthStore } from "@renderer/store/auth";
 import { usePOSStore } from "@renderer/store/usePOSStore";
 import Toast from "@renderer/lib/toast";
 import SearchSelect from "@renderer/components/SearchSelectProps/SearchSelectProps";
-import { DataTable, DataTableColumn } from "@renderer/components/DataTable/DataTable";
+import { DataTable, DataTableColumn, ActionButton } from "@renderer/components/DataTable/DataTable";
 import BottomModal from "@renderer/components/BottomModal/BottomModal";
 import "./Ventas.scss";
 
@@ -44,7 +44,8 @@ const Ventas: React.FC = () => {
     productos = [],
     almacenes = [],
     metodosPago = [],
-    configuracion = {}
+    configuracion = {},
+    turnoActivo
   } = usePOSStore();
 
   // Configuración
@@ -313,8 +314,12 @@ const Ventas: React.FC = () => {
       setIsSaving(true);
       const result = await call("ventas", "create", ventaPayload);
 
+
       if (result?.success) {
         // Mostrar cambio si fue efectivo
+        const detalle = await call("ventas", "getById", { id: result.data.id });
+        handleGeneratePDF([detalle.data])
+        
         if (isMetodoEfectivo && cambioCalculado > 0) {
           Toast.success(
             `✅ Venta registrada. Cambio: ${SIMBOLO}${cambioCalculado.toFixed(DECIMALES)}`,
@@ -338,7 +343,7 @@ const Ventas: React.FC = () => {
   };
 
   // ==================== BOTONES RÁPIDOS DE DENOMINACIONES ====================
-  const denominacionesComunes = [20, 50, 100, 200, 500, 1000, 2000];
+  const denominacionesComunes = [50, 100, 200, 500, 1000, 2000];
 
   const handleDenominacionClick = (valor: number) => {
     const actual = Number(montoRecibido) || 0;
@@ -406,14 +411,23 @@ const Ventas: React.FC = () => {
   // ==================== HISTORIAL ====================
   const cargarHistorial = async () => {
     try {
-      const result = await call("ventas", "getAll", { limit: 20 });
+      const result = await call("ventas", "getAll");
       if (result?.success) {
-        setHistorialVentas(result.data);
+        const ventasConDetalles = await Promise.all(
+          result.data.map(async (venta) => {
+            const detalle = await call("ventas", "getById", { id: venta.id });
+            return detalle?.success ? detalle.data : null;
+          })
+        );
+    
+        // Filtramos nulls si hubo errores
+        const ventasFiltradas = ventasConDetalles.filter(v => v !== null);
+        setHistorialVentas(ventasFiltradas);
       }
     } catch (error) {
       console.error("Error al cargar historial:", error);
     }
-  };
+}
 
   useEffect(() => {
     if (showHistory) {
@@ -451,8 +465,17 @@ const Ventas: React.FC = () => {
     },
   ];
 
+  const handleGeneratePDF = async (data: any[]) => {
+    if(data.length === 0) alert("Necesitar seleccionar al menos una factura")
+
+      if(data.length >= 0 && confirm(`Estas seguro que deseas guardar (${data.length}) facturas`)){
+        const result = await call("pdf", "generarFacturas", {facturas: data, configuracion})
+        if(result.success) Toast.success("Factra generada y guardada")
+      }
+  }
+
   // ==================== RENDER ====================
-  return (
+  return turnoActivo && turnoActivo.estado === 'abierto' ? (
     <div className="Ventas">
       {/* Header */}
       <div className="Ventas__header">
@@ -830,12 +853,20 @@ const Ventas: React.FC = () => {
           <DataTable
             columns={columnasHistorial}
             data={historialVentas}
-            itemsPerPage={10}
+            itemsPerPage={7}
+            selectable
+            actionButtonsWithSelection={[{label:'PDF', onClick: (data) => handleGeneratePDF(data)}] as ActionButton[]}
           />
         </div>
       </BottomModal>
     </div>
-  );
+  ) : (
+    <div className="alert alert-warning" style={{maxWidth:'max-content', maxHeight: '200px', margin: 'auto'}}>
+      <p>Aun no cuentas con un turno activo</p>
+      <span>Haz apertura de caja y luego podras facturar</span>
+
+    </div>
+  )
 };
 
 export default Ventas;

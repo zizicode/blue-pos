@@ -36,7 +36,7 @@ export interface InputConfig {
 
 export interface FormInputProps {
   inputs: InputConfig[];
-  onChange: (name: string, value: any) => void;
+  onChange: (name: string, value: any, type?: InputType) => void; 
   columns?: 1 | 2 | 3 | 4; // Columnas del grid
   gap?: 'sm' | 'md' | 'lg';
   compact?: boolean;
@@ -240,7 +240,7 @@ const FormInput: React.FC<FormInputProps> = ({
         >
           <SingleInput
             {...input}
-            onChange={(value) => onChange(input.name, value)}
+            onChange={(value) => onChange(input.name, value, input.type)}
             compact={compact}
           />
         </div>

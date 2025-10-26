@@ -31,6 +31,7 @@ const Dashboard: React.FC = () => {
     ventas,
   } = usePOSStore();
 
+
   // ✅ Hook correctamente usado
   const turno = turnoActivo
   const ventasStats = useVentasStats(ventas, turno as TurnoActivo | null);

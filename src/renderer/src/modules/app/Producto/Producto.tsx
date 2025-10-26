@@ -1,4 +1,4 @@
-import { ListCheck, ShipIcon, Shirt } from 'lucide-react';
+import { ListCheck, Shirt } from 'lucide-react';
 import React, { useState } from 'react'
 import './Producto.scss'
 import Categorias from './Categorias/Categorias';
@@ -18,13 +18,7 @@ const Producto: React.FC = () => {
             label: 'Categorias',
             icon: <ListCheck size={18} />,
             component: <Categorias />
-        },
-        {
-            id: 'proveedores',
-            label: 'Proveedores',
-            icon: <ShipIcon size={18} />,
-            component: <Productos />
-        },
+        }
     ];
     return (
         <div className='Producto'>

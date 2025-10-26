@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Consolidado de Turnos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 40px;
+            border-bottom: 4px solid #3498db;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .business-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .business-info p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 3px 0;
+        }
+
+        .report-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-stat {
+            text-align: center;
+        }
+
+        .header-stat label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-stat span {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Content Section */
+        .content {
+            padding: 40px;
+        }
+
+        /* Resumen General */
+        .general-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .general-summary h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .summary-item label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .summary-item .amount {
+            font-size: 24px;
+            font-weight: 700;
+            display: block;
+        }
+
+        /* Turno Individual */
+        .turno-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            page-break-inside: avoid;
+        }
+
+        .turno-header {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .turno-header-left h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .turno-header-left p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-abierto {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cerrado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .turno-body {
+            padding: 25px 30px;
+        }
+
+        .turno-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .turno-info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+
+        .turno-info-item label {
+            display: block;
+            font-size: 11px;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .turno-info-item .value {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .turno-money {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .turno-money-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .turno-money-item {
+            text-align: center;
+        }
+
+        .turno-money-item label {
+            display: block;
+            font-size: 11px;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .turno-money-item .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .difference-alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .difference-alert.positive {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .difference-alert.negative {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .difference-alert.neutral {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* Tabla de Movimientos */
+        .movimientos-section h4 {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        th.text-right {
+            text-align: right;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 13px;
+            color: #495057;
+        }
+
+        td.text-right {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tipo-venta {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tipo-entrada {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .tipo-salida {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .notas-box {
+            background: #fff9e6;
+            border: 1px solid #ffd966;
+            border-left: 4px solid #ffb300;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .notas-box strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            padding: 25px 40px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .footer-message {
+            font-size: 13px;
+            color: #495057;
+            font-style: italic;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                border: none;
+                box-shadow: none;
+            }
+
+            .turno-card {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="business-info">
+                    <h1>{{nombre_negocio}}</h1>
+                    <p>{{direccion}}</p>
+                    <p>Tel: {{telefono}} | Email: {{email}}</p>
+                    <p>RFC: {{rfc}}</p>
+                </div>
+                <div class="report-badge">
+                    Reporte Consolidado
+                </div>
+            </div>
+            <div class="header-summary">
+                <div class="header-stat">
+                    <label>Total Turnos</label>
+                    <span>{{total_turnos}}</span>
+                </div>
+                <div class="header-stat">
+                    <label>Rango de Fechas</label>
+                    <span>{{rango_fechas}}</span>
+                </div>
+                <div class="header-stat">
+                    <label>Caja</label>
+                    <span>{{caja_nombre}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Resumen General -->
+            <div class="general-summary">
+                <h2>Resumen General de Turnos</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <label>Total Inicial</label>
+                        <span class="amount">{{total_monto_inicial}}</span>
+                    </div>
+                    <div class="summary-item">
+                        <label>Total Final</label>
+                        <span class="amount">{{total_monto_final}}</span>
+                    </div>
+                    <div class="summary-item">
+                        <label>Total Esperado</label>
+                        <span class="amount">{{total_monto_esperado}}</span>
+                    </div>
+                    <div class="summary-item">
+                        <label>Diferencia Total</label>
+                        <span class="amount">{{total_diferencia}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Turnos Individuales -->
+            {{TURNOS_INDIVIDUALES}}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-info">
+                <span>Generado: {{fecha_generacion}}</span>
+                <span>Sistema POS - {{nombre_negocio}}</span>
+            </div>
+            <div class="footer-message">
+                {{mensaje_ticket_footer}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

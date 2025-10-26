@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { CreditCard, Clock } from 'lucide-react';
+import { CreditCard, Clock, ClipboardClock } from 'lucide-react';
 import Cajas from './Cajas/Cajas';
 import TurnosCaja from './TurnosCaja/TurnosCaja';
 import './Caja.scss';
+import ReportesCaja from './ReportesCaja/ReportesCaja';
 
 // ==================== COMPONENTE ====================
 const Caja: React.FC = () => {
@@ -20,6 +21,12 @@ const Caja: React.FC = () => {
       label: 'Administrar Cajas',
       icon: <CreditCard size={18} />,
       component: <Cajas />
+    },
+    {
+      id: 'historial',
+      label: 'Historial de Caja',
+      icon: <ClipboardClock size={18} />,
+      component: <ReportesCaja />
     },
   ];
 

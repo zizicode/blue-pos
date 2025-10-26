@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo, useEffect } from "react"
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, TableIcon, Inbox, X } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, TableIcon, Inbox, X, Calendar } from "lucide-react"
 import "./DataTable.scss"
 
 export interface DataTableColumn {
@@ -19,7 +19,7 @@ export interface ActionButton {
     modulo: string
     accion: string
   }
-  showWhen?: "single" | "multiple" | "any" // Controla cuándo mostrar el botón
+  showWhen?: "single" | "multiple" | "any"
 }
 
 export interface DataTableProps<T = any> {
@@ -31,12 +31,16 @@ export interface DataTableProps<T = any> {
   creationDateColumn?: string
   renderCell?: (key: string, value: any, row: T) => React.ReactNode
   actionButtons?: React.ReactNode
-  // Nuevas props para selección
+  // Selección
   selectable?: boolean
-  rowKey?: string // Clave única para identificar cada fila (ej: "id")
+  rowKey?: string
   actionButtonsWithSelection?: ActionButton[]
-  userPermissions?: Array<{ modulo: string; accion: string }> // Permisos del usuario
+  userPermissions?: Array<{ modulo: string; accion: string }>
   onSelectionChange?: (selectedItems: T[]) => void
+  // Filtro de fechas
+  showDateFilter?: boolean
+  dateFilterColumn?: string // Columna a filtrar por fecha (ej: "fecha", "creado_en")
+  onFilteredDataChange?: (filteredData: T[]) => void // Callback con datos filtrados
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -53,16 +57,22 @@ export function DataTable<T extends Record<string, any>>({
   actionButtonsWithSelection = [],
   userPermissions = [],
   onSelectionChange,
+  showDateFilter = false,
+  dateFilterColumn = "creado_en",
+  onFilteredDataChange,
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-  const [sortColumn, setSortColumn] = useState<string | null>(null) // Nueva: columna para ordenar
+  const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set())
+  
+  // Estados para filtro de fechas
+  const [dateFrom, setDateFrom] = useState("")
+  const [dateTo, setDateTo] = useState("")
 
-
-  // Filter data based on search term (solo en columnas con datos string)
-  const filteredData = useMemo(() => {
+  // Filter data based on search term
+  const searchFilteredData = useMemo(() => {
     if (!searchTerm) return data
 
     return data.filter((row) => {
@@ -74,38 +84,63 @@ export function DataTable<T extends Record<string, any>>({
     })
   }, [data, columns, searchTerm])
 
+  // Filter data by date range
+  const dateFilteredData = useMemo(() => {
+    if (!showDateFilter || (!dateFrom && !dateTo)) {
+      return searchFilteredData
+    }
+  
+    return searchFilteredData.filter((row) => {
+      const rowDate = row[dateFilterColumn]
+  
+      // Normalizamos la fecha del row
+      const parsedDate = new Date(rowDate)                       // Date real
+      const itemTime = parsedDate.getTime()                      // timestamp (para comparar)
+  
+      // Normalizamos rangos
+      const fromTime = dateFrom ? new Date(dateFrom).getTime() : null
+      const toTime = dateTo
+        ? new Date(dateTo + 'T23:59:59').getTime()
+        : null
+  
+      // Filtros
+      if (fromTime && itemTime < fromTime) return false
+      if (toTime && itemTime > toTime) return false
+  
+      return true
+    })
+  }, [searchFilteredData, showDateFilter, dateFrom, dateTo, dateFilterColumn])
+  
+
+  // Alias para mantener compatibilidad
+  const filteredData = dateFilteredData
+
   // Sort data by selected column or creation date
   const sortedData = useMemo(() => {
     let dataToSort = [...filteredData]
 
     if (sortColumn) {
-      // Ordenar por la columna seleccionada
       dataToSort.sort((a, b) => {
         const aVal = a[sortColumn]
         const bVal = b[sortColumn]
 
-        // Manejar null/undefined
         if (aVal == null && bVal == null) return 0
         if (aVal == null) return sortOrder === "asc" ? -1 : 1
         if (bVal == null) return sortOrder === "asc" ? 1 : -1
 
-        // Si son strings, usar localeCompare
         if (typeof aVal === 'string' && typeof bVal === 'string') {
           return sortOrder === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
         }
 
-        // Si son numbers, comparar numéricamente
         if (typeof aVal === 'number' && typeof bVal === 'number') {
           return sortOrder === "asc" ? aVal - bVal : bVal - aVal
         }
 
-        // Para otros tipos, convertir a string y comparar
         const aStr = String(aVal)
         const bStr = String(bVal)
         return sortOrder === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr)
       })
     } else if (creationDateColumn) {
-      // Ordenar por fecha de creación si no hay columna seleccionada
       dataToSort.sort((a, b) => {
         const dateA = new Date(a[creationDateColumn]).getTime()
         const dateB = new Date(b[creationDateColumn]).getTime()
@@ -151,10 +186,8 @@ export function DataTable<T extends Record<string, any>>({
     const selectedCount = selectedRows.size
 
     return actionButtonsWithSelection.filter((button) => {
-      // Check permissions
       if (!hasPermission(button.permission)) return false
 
-      // Check showWhen condition
       if (button.showWhen === "single" && selectedCount !== 1) return false
       if (button.showWhen === "multiple" && selectedCount <= 1) return false
       if (button.showWhen === "any" && selectedCount === 0) return false
@@ -180,14 +213,12 @@ export function DataTable<T extends Record<string, any>>({
 
   const handleSelectAll = () => {
     if (isAllPageSelected) {
-      // Deselect all from current page
       const newSelected = new Set(selectedRows)
       paginatedData.forEach((row) => {
         newSelected.delete(row[rowKey])
       })
       setSelectedRows(newSelected)
     } else {
-      // Select all from current page
       const newSelected = new Set(selectedRows)
       paginatedData.forEach((row) => {
         newSelected.add(row[rowKey])
@@ -210,23 +241,36 @@ export function DataTable<T extends Record<string, any>>({
     setSelectedRows(new Set())
   }
 
+  const handleClearDateFilter = () => {
+    setDateFrom("")
+    setDateTo("")
+  }
+
   useEffect(() => {
     handleClearSelection()
-  },[data])
+  }, [data])
 
-  // Reset to first page when search changes
-  React.useEffect(() => {
+  // Reset to first page when search or date filter changes
+  useEffect(() => {
     setCurrentPage(1)
-  }, [searchTerm])
+  }, [searchTerm, dateFrom, dateTo])
 
   // Notify parent of selection changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (onSelectionChange) {
       onSelectionChange(selectedItems)
     }
   }, [selectedItems, onSelectionChange])
 
+  // Notify parent of filtered data changes
+  useEffect(() => {
+    if (onFilteredDataChange) {
+      onFilteredDataChange(sortedData)
+    }
+  }, [sortedData, onFilteredDataChange])
+
   const isDataEmpty = data.length === 0
+  const hasActiveFilters = dateFrom || dateTo
 
   return (
     <div className="data-table">
@@ -240,6 +284,45 @@ export function DataTable<T extends Record<string, any>>({
         </div>
 
         <div className="data-table__controls">
+          {/* Date Filter */}
+          {showDateFilter && (
+            <div className="data-table__date-filter">
+              <div className="data-table__date-input-group">
+                <Calendar className="data-table__date-icon" size={16} />
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="data-table__date-input"
+                  placeholder="Desde"
+                />
+              </div>
+              
+              <span className="data-table__date-separator">—</span>
+              
+              <div className="data-table__date-input-group">
+                <Calendar className="data-table__date-icon" size={16} />
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="data-table__date-input"
+                  placeholder="Hasta"
+                />
+              </div>
+
+              {hasActiveFilters && (
+                <button
+                  onClick={handleClearDateFilter}
+                  className="data-table__date-clear"
+                  title="Limpiar filtro de fechas"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Search */}
           <div className="data-table__search">
             <Search className="data-table__search-icon" size={16} />
@@ -338,7 +421,11 @@ export function DataTable<T extends Record<string, any>>({
                       <div className="data-table__empty-icon">
                         <Inbox size={48} />
                       </div>
-                      <p className="data-table__empty-text">No se encontraron resultados</p>
+                      <p className="data-table__empty-text">
+                        {hasActiveFilters 
+                          ? "No se encontraron resultados para el rango de fechas seleccionado"
+                          : "No se encontraron resultados"}
+                      </p>
                     </td>
                   </tr>
                 ) : (
@@ -382,6 +469,7 @@ export function DataTable<T extends Record<string, any>>({
           <div className="data-table__footer">
             <div className="data-table__info">
               Mostrando {startIndex + 1} - {Math.min(endIndex, sortedData.length)} de {sortedData.length} items
+              {hasActiveFilters && ` (${data.length} total)`}
             </div>
 
             <div className="data-table__pagination">

@@ -255,7 +255,7 @@ export const productosController = {
           stock_actual, imagen_url, activo
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
-
+      
       const [result] = await connection.execute<ResultSetHeader>(query, [
         data.codigo,
         data.codigo_barras || null,

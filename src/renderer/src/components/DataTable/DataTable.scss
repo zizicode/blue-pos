@@ -1,3 +1,23 @@
+// ==================== VARIABLES ====================
+// $primary-color: #3b82f6;
+$border-color: #e5e7eb;
+$border-color-hover: #d1d5db;
+// $text-primary: #111827;
+// $text-secondary: #6b7280;
+// $text-muted: #9ca3af;
+// $bg-hover: #f3f4f6;
+// $bg-hover-dark: #e5e7eb;
+// $danger-color: #ef4444;
+// $shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.1);
+
+$radius-sm: 0.25rem;
+$radius-md: 0.5rem;
+
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 0.75rem;
+$spacing-lg: 1rem;
+
 // ============================================
 // DATA TABLE COMPONENT - CON SELECCIÓN
 // ============================================
@@ -282,7 +302,7 @@
   &__th--checkbox,
   &__td--checkbox {
     width: 40px;
-    padding: $spacing-3 $spacing-4;
+    // padding: $spacing-3 $spacing-4;
     text-align: start;
   }
 
@@ -515,6 +535,313 @@
     &:focus {
       outline: none;
       box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+}
+
+
+
+// ==================== FILTRO DE FECHAS ====================
+.data-table__date-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.data-table__date-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 $spacing-3;
+  background: $success;
+  border-radius: $radius-base;
+  transition: all $transition-fast;
+  position: relative;
+
+  // &:hover {
+  //   // background: rgba($gray-800, 3%);
+  // }
+
+  &:focus-within {
+    // background: rgba($gray-800, 5%);
+    outline: 2px solid rgba($primary, 0.3);
+    outline-offset: 0;
+  }
+
+  .data-table__date-icon {
+    color: $gray-100;
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  .data-table__date-input {
+    border: none;
+    outline: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-normal;
+    color: $gray-100;
+    background: transparent;
+    padding: 0;
+    min-width: 100px;
+    max-width: 110px;
+    cursor: pointer;
+    font-family: $font-family-primary;
+
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    &::placeholder {
+      color: $gray-500;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    // Firefox
+    &::-moz-focus-inner {
+      border: 0;
+    }
+
+    // Color del texto del input date
+    &::-webkit-datetime-edit {
+      color: $gray-200;
+    }
+
+    &::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
+    }
+
+    &::-webkit-datetime-edit-text {
+      color: $gray-500;
+      padding: 0 $spacing-1;
+    }
+
+    &::-webkit-datetime-edit-month-field,
+    &::-webkit-datetime-edit-day-field,
+    &::-webkit-datetime-edit-year-field {
+      color: $gray-200;
+    }
+  }
+}
+
+.data-table__date-separator {
+  color: $gray-600;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-sm;
+  user-select: none;
+  padding: 0;
+  margin: 0 $spacing-1;
+}
+
+.data-table__date-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2;
+  background: $gray-800;
+  border: none;
+  border-radius: $radius-base;
+  color: $gray-400;
+  cursor: pointer;
+  transition: all $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $error-dark;
+    color: $white;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ==================== AJUSTES AL HEADER ====================
+.data-table__controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  flex-wrap: wrap;
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: $breakpoint-xl) {
+  .data-table__date-filter {
+    .data-table__date-input-group {
+      .data-table__date-input {
+        min-width: 95px;
+        max-width: 100px;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .data-table__date-filter {
+    gap: $spacing-1;
+
+    .data-table__date-input-group {
+      padding: $spacing-2;
+      
+      .data-table__date-input {
+        min-width: 90px;
+        max-width: 95px;
+        font-size: $font-size-xs;
+      }
+    }
+
+    .data-table__date-separator {
+      margin: 0;
+    }
+
+    .data-table__date-clear {
+      padding: $spacing-2;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .data-table__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-3;
+  }
+
+  .data-table__controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .data-table__date-filter {
+    order: -1; // Colocar primero
+    width: 100%;
+  }
+
+  .data-table__search {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .data-table__date-filter {
+    flex-wrap: wrap;
+    gap: $spacing-2;
+
+    .data-table__date-input-group {
+      flex: 1;
+      min-width: calc(50% - #{$spacing-1});
+      
+      .data-table__date-input {
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        font-size: $font-size-xs;
+      }
+    }
+
+    .data-table__date-separator {
+      display: none;
+    }
+
+    .data-table__date-clear {
+      flex: 1;
+      min-width: 100%;
+      justify-content: center;
+      gap: $spacing-2;
+
+      &::after {
+        content: 'Limpiar filtro';
+        font-size: $font-size-xs;
+        color: currentColor;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .data-table__date-filter {
+    .data-table__date-input-group {
+      min-width: 100%;
+    }
+  }
+}
+
+// ==================== DARK THEME OPTIMIZADO ====================
+// Ya está optimizado para dark theme por defecto
+// Si necesitas light theme, aquí van los overrides:
+
+@media (prefers-color-scheme: light) {
+  .data-table__date-input-group {
+    background: $white;
+    border: $border-width-thin solid $border-color-light;
+
+    &:hover {
+      border-color: $border-color-base;
+      background: $gray-50;
+    }
+
+    &:focus-within {
+      border-color: $primary;
+      background: $white;
+      outline: 2px solid rgba($primary, 0.1);
+    }
+
+    .data-table__date-icon {
+      color: $gray-500;
+    }
+
+    .data-table__date-input {
+      color: $gray-900;
+
+      &::placeholder {
+        color: $gray-400;
+      }
+
+      &::-webkit-datetime-edit {
+        color: $gray-900;
+      }
+
+      &::-webkit-datetime-edit-text {
+        color: $gray-500;
+      }
+
+      &::-webkit-datetime-edit-month-field,
+      &::-webkit-datetime-edit-day-field,
+      &::-webkit-datetime-edit-year-field {
+        color: $gray-900;
+      }
+    }
+  }
+
+  .data-table__date-separator {
+    color: $gray-400;
+  }
+
+  .data-table__date-clear {
+    background: $white;
+    border: $border-width-thin solid $border-color-light;
+    color: $gray-500;
+
+    &:hover {
+      background: $error;
+      border-color: $error;
+      color: $white;
     }
   }
 }

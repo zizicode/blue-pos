@@ -117,10 +117,10 @@ export const turnosCajaController = {
         [data.id]
       )
 
-      const entradas = movimientos[0]?.entradas || 0
-      const salidas = movimientos[0]?.salidas || 0
-      const montoEsperado = turno[0].monto_inicial + entradas - salidas
-      const diferencia = data.monto_final - montoEsperado
+      const entradas = Number(movimientos[0]?.entradas) || 0
+      const salidas = Number(movimientos[0]?.salidas) || 0
+      const montoEsperado = Number(turno[0].monto_inicial) + entradas - salidas
+      const diferencia = Number(data.monto_final) - montoEsperado
 
       // Cerrar turno
       await connection.execute(
@@ -227,9 +227,9 @@ export const turnosCajaController = {
         [turno[0].id]
       )
 
-      const montoActual = turno[0].monto_inicial + 
-                         (totales[0].total_entradas || 0) - 
-                         (totales[0].total_salidas || 0)
+      const montoActual = Number(turno[0].monto_inicial) + 
+                         (Number(totales[0].total_entradas) || 0) - 
+                         (Number(totales[0].total_salidas) || 0)
 
       return {
         success: true,

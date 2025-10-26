@@ -95,7 +95,7 @@ const Categorias: React.FC = () => {
     if (!user?.usuario.id) return false;
 
     try {
-      await Promise.all(
+      const result: any = await Promise.all(
         ids.map(id =>
           call('categorias', 'delete', {
             id,
@@ -105,7 +105,7 @@ const Categorias: React.FC = () => {
       );
 
       await reloadData();
-      alert(`✅ ${ids.length === 1 ? 'Categoría eliminada' : 'Categorías eliminadas'} exitosamente`);
+      if(result.success) alert(`✅ ${ids.length === 1 ? 'Categoría eliminada' : 'Categorías eliminadas'} exitosamente`)
       return true;
     } catch (error) {
       console.error('Error al eliminar categorías:', error);
@@ -144,7 +144,7 @@ const Categorias: React.FC = () => {
         required: true,
         disabled: isView,
         icon: <FolderKanban />,
-        col: 2,
+        col: 4,
       },
       {
         name: 'descripcion',
@@ -155,16 +155,8 @@ const Categorias: React.FC = () => {
         required: true,
         disabled: isView,
         icon: <FileText />,
-        col: 2,
-        hint: 'Breve descripción de la categoría'
-      },
-      {
-        name: 'activo',
-        label: 'Categoría activa',
-        type: 'checkbox',
-        value: values.activo,
-        disabled: isView,
         col: 4,
+        hint: 'Breve descripción de la categoría'
       },
     ];
   };

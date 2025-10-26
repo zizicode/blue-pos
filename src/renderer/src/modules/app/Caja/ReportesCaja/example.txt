@@ -1,0 +1,47 @@
+
+  const datosEjemplo = {
+    turno: {
+      id: 9,
+      caja_id: 1,
+      usuario_id: 2,
+      fecha_apertura: "2025-10-25T03:44:02.000Z",
+      fecha_cierre: "2025-10-25T15:30:00.000Z",
+      monto_inicial: "5000.00",
+      monto_final: "8500.00",
+      monto_esperado: "8450.00",
+      diferencia: "50.00",
+      estado: "cerrado",
+      notas: "Turno sin incidencias. Todo en orden.",
+      caja_nombre: "Caja Principal",
+      usuario_nombre: "Victor Rodriguez",
+      detalles_turno: [
+        {
+          tipo: "Venta",
+          descripcion: "Venta #001",
+          cantidad: 3,
+          monto: "1500.00",
+          fecha: "2025-10-25T10:15:00.000Z",
+        },
+        {
+          tipo: "Venta",
+          descripcion: "Venta #002",
+          cantidad: 2,
+          monto: "950.00",
+          fecha: "2025-10-25T11:30:00.000Z",
+        },
+      ],
+    },
+    configuracion: {
+      nombre_negocio: "Gantires Sport",
+      rfc: "GSP123456789",
+      telefono: "(809) 555-1234",
+      email: "info@gantiressport.com",
+      direccion: "Av. Principal #123",
+      ciudad: "Santo Domingo",
+      estado: "Distrito Nacional",
+      codigo_postal: "10101",
+      moneda: "DOP",
+      simbolo_moneda: "$",
+      mensaje_ticket_footer: "Gracias por su compra",
+    },
+  }

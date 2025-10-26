@@ -164,7 +164,7 @@ const TurnosCaja: React.FC = () => {
         await cargarTurnoActivo();
         setOpenAbrirTurno(false);
         setAbrirTurnoData({ caja_id: null, monto_inicial: 0, notas: '' });
-        Toast.success('✅ Turno abierto exitosamente');
+        Toast.success('Turno abierto exitosamente');
       } else {
         Toast.error(result?.message || 'Error al abrir turno');
       }
@@ -193,7 +193,7 @@ const TurnosCaja: React.FC = () => {
 
       if (result?.success) {
         Toast.success(
-          `✅ Turno cerrado exitosamente\n\nEsperado: $${formatNumber(result.data.monto_esperado)}\nFinal: $${formatNumber(result.data.monto_final)}\nDiferencia: $${formatNumber(result.data.diferencia)}`,
+          `Turno cerrado exitosamente\n\nEsperado: $${formatNumber(result.data.monto_esperado)}\nFinal: $${formatNumber(result.data.monto_final)}\nDiferencia: $${formatNumber(result.data.diferencia)}`,
           { duration: 8000 }
         );
         await cargarTurnoActivo();
@@ -236,7 +236,7 @@ const TurnosCaja: React.FC = () => {
           metodo_pago_id: metodosPago?.[0]?.id || 1,
           concepto: ''
         });
-        Toast.success('✅ Movimiento registrado exitosamente');
+        Toast.success('Movimiento registrado exitosamente');
       } else {
         Toast.error(result?.message || 'Error al registrar movimiento');
       }
@@ -272,7 +272,7 @@ const TurnosCaja: React.FC = () => {
       });
 
       if (result?.success) {
-        Toast.success(`✅ Venta ${ventaSeleccionada.folio} anulada exitosamente`);
+        Toast.success(`Venta ${ventaSeleccionada.folio} anulada exitosamente`);
         await cargarTurnoActivo();
         setOpenAnularVenta(false);
         setOpenDetalleVenta(false);

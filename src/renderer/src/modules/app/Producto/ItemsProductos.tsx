@@ -5,6 +5,7 @@ import { useAuthStore } from '@renderer/store/auth';
 import { usePriceInput, useNumberInput } from '@renderer/hooks/usePriceInput';
 import { api } from '@renderer/services/api';
 import { useInitializePOSData } from '@renderer/hooks/useInitializePOSData';
+import { Barcode, Boxes, DollarSign, Layers, Package, Tag } from 'lucide-react';
 
 export interface Producto {
   id?: number;
@@ -28,8 +29,20 @@ export interface Producto {
   actualizado_en?: string;
 }
 
+export const generarCodigoProducto = (nombre: string): string => {
+  if (!nombre || typeof nombre !== "string") return "";
+
+  // tomar la primera letra y convertirla a mayúscula
+  const inicial = nombre.trim().charAt(0).toUpperCase();
+
+  // generar número random de 6 dígitos
+  const random = Math.floor(100000 + Math.random() * 900000);
+
+  return `${inicial}-${random}`;
+};
+
 const PRODUCTO_INICIAL: Producto = {
-  codigo: '',
+  codigo: generarCodigoProducto('P'),
   codigo_barras: '',
   nombre: '',
   descripcion: '',
@@ -49,8 +62,8 @@ const PRODUCTO_INICIAL: Producto = {
 
 const Productos: React.FC = () => {
   const usuario_id = useAuthStore((state) => state.user?.usuario.id) as number;
-  const { productos } = usePOSStore();
-  const {syncAllData} = useInitializePOSData();
+  const { productos, unidadesMedida, categorias } = usePOSStore();
+  const { syncAllData } = useInitializePOSData();
   const [loading, setLoading] = useState(false);
 
   const precioCompra = usePriceInput(PRODUCTO_INICIAL.precio_compra, { decimals: 2, minValue: 0 });
@@ -65,6 +78,9 @@ const Productos: React.FC = () => {
   React.useEffect(() => { stockActual.setValue(PRODUCTO_INICIAL.stock_actual); }, [PRODUCTO_INICIAL.stock_actual]);
 
   // ================== CONFIG CRUD ==================
+  const unidadesM = unidadesMedida.map((u) => {return {label: u.nombre+' '+ `(${u.abreviatura})`, value:u.id }})
+  const CategoriasM = categorias.map((u) => {return {label: u.nombre, value:u.id }})
+
   const crudConfig: CRUDConfig<Producto> = {
     title: 'Productos',
     subtitle: 'Gestión de productos',
@@ -76,15 +92,130 @@ const Productos: React.FC = () => {
     columns: [
       { label: 'Código', key: 'codigo' },
       { label: 'Nombre', key: 'nombre' },
-      { label: 'Precio', key: 'precio_venta', render: (p) => `RD$ ${p.precio_venta}` },
+      { label: 'Precio', key: 'precio_venta', render: (p) => `RD$ ${p}` },
       { label: 'Stock', key: 'stock_actual' },
-      { label: 'Estado', key: 'activo', render: (p) => p.activo ? 'Activo' : 'Inactivo' },
+      { label: 'Estado', key: 'activo', render: (p) => p ? 'Activo' : 'Inactivo' },
     ],
     formFields: (data, mode) => [
-      { name: 'codigo', label: 'Código', type: 'text', value: data?.codigo ?? '', disabled: mode === 'view' },
-      { name: 'nombre', label: 'Nombre', type: 'text', value: data?.nombre ?? '', required: true, disabled: mode === 'view' },
-      { name: 'precio_venta', label: 'Precio venta', type: 'number', value: data?.precio_venta ?? 0, disabled: mode === 'view' },
-      { name: 'stock_actual', label: 'Stock', type: 'number', value: data?.stock_actual ?? 0, disabled: mode === 'view' },
+      { 
+        name: 'codigo', 
+        label: 'Código', 
+        type: 'text', 
+        value: data?.codigo !== '' ? generarCodigoProducto(data?.nombre ?? 'P') : data.codigo, 
+        required: true, 
+        placeholder: 'Ej: PRD-001',
+        icon: <Package size={16} />,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+      { 
+        name: 'codigo_barras', 
+        label: 'Código de barra', 
+        type: 'text', 
+        value: data?.codigo_barras ?? '', 
+        placeholder: 'Escanea o escribe el código de barra',
+        icon: <Barcode size={16} />,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+      { 
+        name: 'nombre', 
+        label: 'Nombre', 
+        type: 'text', 
+        value: data?.nombre ?? '', 
+        required: true, 
+        placeholder: 'Nombre del producto',
+        icon: <Tag size={16} />,
+        disabled: mode === 'view', 
+        col: 2 
+      },
+    
+      // 💵 PRECIOS
+      { 
+        name: 'precio_compra', 
+        label: 'Precio compra', 
+        type: 'number', 
+        value: data?.precio_compra ?? 0, 
+        placeholder: 'Ej: 120.50',
+        icon: <DollarSign size={16} />,
+        min: 0,
+        step: 0.01,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+      { 
+        name: 'precio_venta', 
+        label: 'Precio venta', 
+        type: 'number', 
+        value: data?.precio_venta ?? 0, 
+        required: true,
+        placeholder: 'Ej: 180.00',
+        icon: <DollarSign size={16} />,
+        min: 0,
+        step: 0.01,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+    
+      // 📦 STOCK
+      { 
+        name: 'stock_minimo', 
+        label: 'Stock mínimo', 
+        type: 'number', 
+        value: data?.stock_minimo ?? 0, 
+        placeholder: 'Cantidad mínima',
+        icon: <Layers size={16} />,
+        min: 0,
+        step: 1,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+      { 
+        name: 'stock_actual', 
+        label: 'Stock actual', 
+        type: 'number', 
+        value: data?.stock_actual ?? 0, 
+        placeholder: 'Existencias disponibles',
+        icon: <Boxes size={16} />,
+        min: 0,
+        step: 1,
+        disabled: mode === 'view', 
+        col: 1 
+      },
+    
+      // 🗂️ SELECTS
+      { 
+        name: 'categoria_id', 
+        label: 'Categoría', 
+        type: 'select', 
+        value: data?.categoria_id ?? null, 
+        options: CategoriasM,
+        placeholder: 'Seleccione categoría',
+        disabled: mode === 'view', 
+        col: 1 
+      },
+      { 
+        name: 'unidad_medida_id', 
+        label: 'Unidad de medida', 
+        type: 'select', 
+        value: data?.unidad_medida_id ?? null,
+        options: unidadesM,
+        placeholder: 'Seleccione unidad',
+        disabled: mode === 'view', 
+        col: 1 
+      },
+    
+      // 📝 DESCRIPCIÓN (SIN ICONO)
+      { 
+        name: 'descripcion', 
+        label: 'Descripción', 
+        type: 'textarea', 
+        value: data?.descripcion ?? '', 
+        placeholder: 'Ej: Producto X, importado, con X especificaciones...',
+        rows: 3,
+        disabled: mode === 'view', 
+        col: 4 
+      },
     ],
     onCreate: async (data) => {
       setLoading(true);
@@ -114,7 +245,7 @@ const Productos: React.FC = () => {
         return true;
       } catch { return false; } finally { setLoading(false); }
     },
-    permissions: {modulo: 'productos', crear: true, editar: true, eliminar: true, ver: true },
+    permissions: { modulo: 'productos', crear: true, editar: true, eliminar: true, ver: true },
     validate: (data) => {
       const errors: Record<string, string> = {};
       if (!data.nombre) errors.nombre = 'Nombre es obligatorio';

@@ -359,77 +359,74 @@ export const ventasController = {
    */
   async getById(data: { id: number }) {
     try {
-      const connection = await getConnection()
-
-      // Obtener venta
+      const connection = await getConnection();
+  
+      // Obtener venta principal con cliente, usuario y almacén
       const [venta] = await connection.execute<RowDataPacket[]>(
         `SELECT 
-          v.*,
-          c.nombre as cliente_nombre,
-          c.telefono as cliente_telefono,
-          c.email as cliente_email,
-          u.nombre as usuario_nombre,
-          a.nombre as almacen_nombre
-        FROM ventas v
-        LEFT JOIN clientes c ON v.cliente_id = c.id
-        LEFT JOIN usuarios u ON v.usuario_id = u.id
-        LEFT JOIN almacenes a ON v.almacen_id = a.id
-        WHERE v.id = ?`,
+           v.*,
+           c.nombre AS cliente_nombre,
+           c.telefono AS cliente_telefono,
+           c.email AS cliente_email,
+           u.nombre AS usuario_nombre,
+           a.nombre AS almacen_nombre
+         FROM ventas v
+         LEFT JOIN clientes c ON v.cliente_id = c.id
+         LEFT JOIN usuarios u ON v.usuario_id = u.id
+         LEFT JOIN almacenes a ON v.almacen_id = a.id
+         WHERE v.id = ?`,
         [data.id]
-      )
-
+      );
+  
       if (venta.length === 0) {
-        return {
-          success: false,
-          message: 'Venta no encontrada'
-        }
+        return { success: false, message: 'Venta no encontrada' };
       }
-
-      // Obtener detalles
+  
+      // Obtener detalles de la venta con datos del producto y unidad de medida
       const [detalles] = await connection.execute<RowDataPacket[]>(
         `SELECT 
-          dv.*,
-          p.codigo,
-          p.nombre as producto_nombre,
-          p.codigo_barras,
-          um.abreviatura as unidad_medida
-        FROM detalle_ventas dv
-        INNER JOIN productos p ON dv.producto_id = p.id
-        LEFT JOIN unidades_medida um ON p.unidad_medida_id = um.id
-        WHERE dv.venta_id = ?
-        ORDER BY dv.id`,
+           dv.*,
+           p.codigo,
+           p.nombre AS producto_nombre,
+           p.codigo_barras,
+           um.abreviatura AS unidad_medida
+         FROM detalle_ventas dv
+         INNER JOIN productos p ON dv.producto_id = p.id
+         LEFT JOIN unidades_medida um ON p.unidad_medida_id = um.id
+         WHERE dv.venta_id = ?
+         ORDER BY dv.id`,
         [data.id]
-      )
-
-      // Obtener pagos
+      );
+  
+      // Obtener pagos asociados a la venta
       const [pagos] = await connection.execute<RowDataPacket[]>(
         `SELECT 
-          pv.*,
-          mp.nombre as metodo_pago_nombre
-        FROM pagos_venta pv
-        INNER JOIN metodos_pago mp ON pv.metodo_pago_id = mp.id
-        WHERE pv.venta_id = ?
-        ORDER BY pv.fecha`,
+           pv.*,
+           mp.nombre AS metodo_pago_nombre
+         FROM pagos_venta pv
+         INNER JOIN metodos_pago mp ON pv.metodo_pago_id = mp.id
+         WHERE pv.venta_id = ?
+         ORDER BY pv.fecha`,
         [data.id]
-      )
-
+      );
+  
       return {
         success: true,
         data: {
           ...venta[0],
           detalles,
-          pagos
-        }
-      }
+          pagos,
+        },
+      };
     } catch (error) {
-      console.error('Error al obtener venta:', error)
+      console.error('Error al obtener venta:', error);
       return {
         success: false,
         message: 'Error al obtener venta',
-        error: error instanceof Error ? error.message : 'Error desconocido'
-      }
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
     }
-  },
+  },  
 
   /**
    * Obtener venta por folio
@@ -623,5 +620,9 @@ export const ventasController = {
         error: error instanceof Error ? error.message : 'Error desconocido'
       }
     }
-  }
+  },
+  /**
+ * Obtener todas las ventas con sus productos anidados
+ */
+
 }

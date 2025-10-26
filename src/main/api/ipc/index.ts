@@ -80,6 +80,11 @@ import { dashboardController } from './reportes/dashboardController'
 import { dbConfigController } from './sistema/dbConfigController'
 import { appController } from './sistema/appController'
 
+// ============================================
+// MÓDULO 12: UTILIDADES PDF
+// ============================================
+import { PDF } from './pdfIpcHandler/pdfIpcHandler'
+
 
 // ============================================
 // 👉 REGISTRO DE CONTROLADORES POR MÓDULO
@@ -132,6 +137,8 @@ const controllers = {
   logs: logsController,
   dbConfig: dbConfigController,
   app: appController,
+
+  pdf: PDF,
 }
 
 /**

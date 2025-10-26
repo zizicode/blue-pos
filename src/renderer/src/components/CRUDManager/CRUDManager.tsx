@@ -52,6 +52,10 @@ export interface CRUDConfig<T = any> {
   itemsPerPage?: number;
   showCards?: boolean;
   tableIcon?: React.ReactNode;
+  showDateFilter?: boolean;
+  dateFilterColumn?: string;
+  onFilteredDataChange?: (filteredData: T[]) => void
+
 
   // Validación
   validate?: (data: T, mode: 'create' | 'edit') => Record<string, string>;
@@ -90,10 +94,27 @@ function CRUDManager<T extends Record<string, any>>({ config }: CRUDManagerProps
   };
 
   // ==================== HANDLERS ====================
-  const handleChange = (name: string, value: any) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (name: string, rawValue: any, type?: string) => {
+    let value = rawValue;
 
-    // Limpiar error del campo
+    // Si es number: aplicar normalización
+    if (type === "number") {
+      let num = String(rawValue);
+
+      // Evitar ceros iniciales en números (05 -> 5)
+      if (/^0\d+/.test(num)) {
+        num = num.replace(/^0+/, "");
+      }
+
+      value = num === "" ? "" : Number(num);
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Limpiar error si lo había
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -279,6 +300,9 @@ function CRUDManager<T extends Record<string, any>>({ config }: CRUDManagerProps
         actionButtonsWithSelection={actionButtons}
         itemsPerPage={config.itemsPerPage || 10}
         icon={config.tableIcon}
+        showDateFilter={config.showDateFilter ?? false}
+        dateFilterColumn={config.dateFilterColumn ?? ''}
+        onFilteredDataChange={config.onFilteredDataChange}
       />
 
       {/* Modal CREAR */}
@@ -321,11 +345,11 @@ function CRUDManager<T extends Record<string, any>>({ config }: CRUDManagerProps
             </div>
 
             <FormInput
-              inputs={config.formFields(null, 'create').map(field => ({
+              inputs={config.formFields(formData, 'create').map(field => ({
                 ...field,
                 error: errors[field.name]
               }))}
-              onChange={handleChange}
+              onChange={(name, value, type) => handleChange(name, value, type)}
               columns={4}
               gap="md"
             />
@@ -402,7 +426,7 @@ function CRUDManager<T extends Record<string, any>>({ config }: CRUDManagerProps
 
           <FormInput
             inputs={config.formFields(formData, 'view')}
-            onChange={() => {}}
+            onChange={() => { }}
             columns={4}
             gap="md"
           />

@@ -34,7 +34,7 @@ const Head: React.FC<HeadProps> = ({ title = 'Custom', subtitle, buttons }) => {
                         btn.private ? (
                             <Can module={btn.private.module} action={btn.private.action} key={i}>
                                 <button
-                                    className={`btn btn-sm ${btn.className}`}
+                                    className={`${btn.className}`}
                                     onClick={btn.onClick}
                                     disabled={btn.disabled}
                                 >
