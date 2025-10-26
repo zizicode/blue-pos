@@ -29,42 +29,56 @@ export interface Producto {
   actualizado_en?: string;
 }
 
-export const generarCodigoProducto = (nombre: string): string => {
-  if (!nombre || typeof nombre !== "string") return "";
-
-  // tomar la primera letra y convertirla a mayúscula
-  const inicial = nombre.trim().charAt(0).toUpperCase();
-
-  // generar número random de 6 dígitos
-  const random = Math.floor(100000 + Math.random() * 900000);
-
-  return `${inicial}-${random}`;
-};
-
-const PRODUCTO_INICIAL: Producto = {
-  codigo: generarCodigoProducto('P'),
-  codigo_barras: '',
-  nombre: '',
-  descripcion: '',
-  categoria_id: null,
-  categoria_nombre: '',
-  unidad_medida_id: null,
-  unidad_medida_nombre: '',
-  proveedor_id: null,
-  proveedor_nombre: '',
-  precio_compra: 0,
-  precio_venta: 0,
-  stock_minimo: 0,
-  stock_actual: 0,
-  activo: true,
-  imagen_url: '',
-};
 
 const Productos: React.FC = () => {
   const usuario_id = useAuthStore((state) => state.user?.usuario.id) as number;
   const { productos, unidadesMedida, categorias } = usePOSStore();
   const { syncAllData } = useInitializePOSData();
   const [loading, setLoading] = useState(false);
+
+  const generarCodigoProducto = (
+    nombre: string,
+    productos: Producto[] // debe contener el campo codigo
+  ): string => {
+    if (!nombre || typeof nombre !== "string") return "";
+  
+    const inicial = nombre.trim().charAt(0).toUpperCase();
+  
+    const generar = (): string => {
+      const random = Math.floor(100000 + Math.random() * 900000);
+      return `${inicial}-${random}`;
+    };
+  
+    let codigo = generar();
+  
+    // mientras exista un producto con el mismo codigo, generar otro
+    while (productos.some(p => p.codigo === codigo)) {
+      codigo = generar();
+    }
+  
+    return codigo;
+  };
+  
+  
+  const PRODUCTO_INICIAL: Producto = {
+    codigo: generarCodigoProducto('P', productos),
+    codigo_barras: '',
+    nombre: '',
+    descripcion: '',
+    categoria_id: null,
+    categoria_nombre: '',
+    unidad_medida_id: null,
+    unidad_medida_nombre: '',
+    proveedor_id: null,
+    proveedor_nombre: '',
+    precio_compra: 0,
+    precio_venta: 0,
+    stock_minimo: 0,
+    stock_actual: 0,
+    activo: true,
+    imagen_url: '',
+  };
+  
 
   const precioCompra = usePriceInput(PRODUCTO_INICIAL.precio_compra, { decimals: 2, minValue: 0 });
   const precioVenta = usePriceInput(PRODUCTO_INICIAL.precio_venta, { decimals: 2, minValue: 0 });
@@ -101,7 +115,7 @@ const Productos: React.FC = () => {
         name: 'codigo', 
         label: 'Código', 
         type: 'text', 
-        value: data?.codigo !== '' ? generarCodigoProducto(data?.nombre ?? 'P') : data.codigo, 
+        value: data?.codigo !== '' ? generarCodigoProducto(data?.nombre ?? 'P', productos) : data.codigo, 
         required: true, 
         placeholder: 'Ej: PRD-001',
         icon: <Package size={16} />,

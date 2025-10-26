@@ -119,7 +119,7 @@ const Auth: React.FC = () => {
               <p>Nombre de usuario</p>
               <input type="text" name="usuario" className='input'
                 disabled={!dbConnection?.id}
-                required placeholder="vrodriguez" />
+                required placeholder="GANTIRES" />
             </label>
             <label className='input-label'>
               <p>Contraseña</p>
