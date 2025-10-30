@@ -338,7 +338,7 @@ const TurnosCaja: React.FC = () => {
       min: 0,
       step: 0.01,
       col: 4,
-      hint: `Monto esperado: $${formatNumber(turnoActivo?.estadisticas.monto_actual || 0)}`
+      hint: `Monto total en caja: $${formatNumber(turnoActivo?.estadisticas.monto_actual || 0)} menos monto inicial $${formatNumber(turnoActivo?.monto_inicial || 0)} = $${formatNumber((turnoActivo?.estadisticas.monto_actual || 0) - (turnoActivo?.monto_inicial || 0))}`
     },
     {
       name: 'notas',
@@ -506,25 +506,25 @@ const TurnosCaja: React.FC = () => {
       icon: <DollarSign />,
     },
     {
-      title: 'Monto en caja',
-      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalActualCaja)}`,
-      icon: <DollarSign />,
-    },
-    {
       title: 'Total en ventas',
-      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalVentas)}`,
+      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalVentasContado)}`,
       icon: <TrendingUp />,
       subValue: `${turnoActivo.estadisticas.total_ventas || 0} ventas`
     },
     {
-      title: 'Total Entradas',
-      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalEntrada)}`,
+      title: 'Total de abonos',
+      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalAbono)}`,
       icon: <TrendingUp />,
     },
     {
       title: 'Total Salidas',
       value: `$${formatNumber(ventas_estadisticas.totalTurno.totalSalida)}`,
       icon: <TrendingDown />,
+    },
+    {
+      title: 'Monto en caja',
+      value: `$${formatNumber(ventas_estadisticas.totalTurno.totalActualCaja)}`,
+      icon: <DollarSign />,
     },
   ] : [];
 

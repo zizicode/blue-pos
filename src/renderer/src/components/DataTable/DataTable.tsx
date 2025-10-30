@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo, useEffect, ReactNode } from "react"
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, TableIcon, Inbox, X, Calendar } from "lucide-react"
 import "./DataTable.scss"
 
@@ -31,6 +31,7 @@ export interface DataTableProps<T = any> {
   creationDateColumn?: string
   renderCell?: (key: string, value: any, row: T) => React.ReactNode
   actionButtons?: React.ReactNode
+  children?: ReactNode
   // Selección
   selectable?: boolean
   rowKey?: string
@@ -59,6 +60,7 @@ export function DataTable<T extends Record<string, any>>({
   onSelectionChange,
   showDateFilter = false,
   dateFilterColumn = "creado_en",
+  children,
   onFilteredDataChange,
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -337,6 +339,10 @@ export function DataTable<T extends Record<string, any>>({
 
           {actionButtons && <div className="data-table__actions">{actionButtons}</div>}
         </div>
+      </div>
+
+      <div className="children">
+      {children}
       </div>
 
       {/* Action Bar (shown when items are selected) */}

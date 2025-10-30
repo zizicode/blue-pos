@@ -11,6 +11,7 @@ $scroll-radius: $radius-full;
 
 // 🌐 Scroll global
 * {
+  list-style: none;
   scrollbar-width: thin;
   scrollbar-color: #{$scroll-thumb} transparent;
 

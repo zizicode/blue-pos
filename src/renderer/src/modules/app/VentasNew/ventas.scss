@@ -1,0 +1,420 @@
+.ventas-new {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 400px;
+    gap: 7px;
+}
+
+.ventas-new .detail_sale,
+.ventas-new .table_productos {
+    // flex: 1;
+    background-color: $white;
+    border: 1px solid $border-color-light;
+    border-radius: 1rem 1rem 0 0;
+    padding: 1rem;
+}
+
+
+.ventas-new .table_productos {
+
+    // Addi
+    .form-label {
+        font-size: .8rem;
+
+        .required {
+            color: $error-dark;
+        }
+    }
+
+    .head_sale{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .tipo-venta{
+            display: flex;
+            gap: 10px;
+            font-size: .9rem;
+            font-weight: 600;
+
+            label{
+                display: flex;
+                gap: 5px;
+            }
+        }
+    }
+
+    .options_search{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+
+    .search-select{
+        max-width: 50% !important;
+        margin-top: 5px;
+    }
+
+    table.productos_sale {
+        width: 100%;
+        margin-top: 1rem;
+        border-collapse: collapse;
+        border-spacing: 0;
+        user-select: none;
+
+        thead {
+            background-color: $gray-100;
+        }
+
+        th {
+            padding: 1rem;
+            font-weight: 600;
+            font-size: .8rem;
+
+            &:nth-child(1) {
+                text-align: left;
+            }
+        }
+
+        tr {
+            border-bottom: 1px dashed $border-color-light;
+        }
+
+        td {
+            &:nth-child(1) {
+                text-align: left;
+
+                .prod_det {
+
+                    span:nth-child(1) {
+                        font-size: .9rem;
+                        font-weight: 600;
+                        color: $gray-800;
+                    }
+
+                    color: $gray-500;
+                    display: flex;
+                    flex-direction: column;
+                    font-size: .6rem;
+                }
+            }
+
+            text-align: center;
+            padding: .4rem 1rem;
+            font-size: .8rem;
+
+            .change_cantidad{
+                display: flex;
+                align-items: center;
+                gap: 7px;
+
+                button{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: 1px solid $border-color-light;
+                    background-color: transparent;
+                    cursor: pointer;
+                }
+            }
+
+            button.btn-remove{
+                background-color: transparent;
+                border: none;
+                color: $error-dark;
+                cursor: pointer;
+                padding: .3rem ;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: .2rem;
+                float: right;
+
+                &:hover{
+                    color: $white;
+                    background-color: $error;
+                }
+            }
+
+            .input-wrapper {
+                input {
+                    max-width: 60px;
+                    margin: auto;
+                    padding: 3px;
+                    border: 1px solid $border-color-light;
+                    border-radius: .2rem;
+                    outline: none;
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+
+}
+
+.ventas-new .detail_sale {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
+    overflow-y: auto;
+
+    .head_sale {
+        // padding: 5px;
+        height: max-content;
+
+        h2 {
+            font-size: 1.7rem;
+        }
+
+        p {
+            font-size: .8rem;
+            font-weight: 700;
+            color: $gray-500;
+        }
+    }
+
+    .select_cliente {
+        border-bottom: 2px dashed $border-color-light;
+        padding-bottom: 1rem;
+
+        .detail_cliente {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            margin: .5rem 0;
+            gap: .4rem;
+
+
+            li {
+                flex: 1;
+                font-size: .8rem;
+                font-weight: 600;
+                display: flex;
+                justify-content: space-between;
+
+                span:nth-child(2) {
+                    font-weight: 400;
+                    color: $gray-500;
+                }
+            }
+        }
+    }
+
+    .summary_payment {
+        * h4 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: $gray-700;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+            margin-top: .5rem;
+
+            li {
+                display: flex;
+                justify-content: space-between;
+                font-size: .8rem;
+
+                span:nth-child(1) {
+                    font-weight: 600;
+                    color: $gray-600;
+                }
+            }
+        }
+    }
+
+    .pagos-section {
+        position: relative;
+        flex: 1;
+        margin: 0.5rem 0;
+        padding: .5rem 0;
+        border-top: 2px dashed $border-color-light;
+
+        .pagos-list {
+            margin: .5rem 0;
+            display: flex;
+            padding-left: 1rem;
+            flex-direction: column;
+
+            li {
+                list-style: circle !important;
+                flex: 1;
+
+                display: flex;
+                gap: 10px;
+
+                .pago-info {
+                    display: flex;
+                    gap: 10px;
+                }
+
+                .btn-remove-pago {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: .3rem;
+                    color: $error;
+                    outline: none;
+                    transition: all 250ms linear;
+                    cursor: pointer;
+
+                    :hover {
+                        color: $error;
+                    }
+                }
+            }
+        }
+
+        .agregar-pago-form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .agregar-pago-form .form-row {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+            margin: .5rem 0;
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+
+
+            .form-input,
+            .form-select,
+            .btn-saldo {
+                display: flex;
+                flex: 1;
+                // width: 100%;
+                padding: $spacing-2 $spacing-2 $spacing-2 $spacing-2;
+                border: $border-width-thin solid $border-color-light;
+                border-radius: $radius-md;
+                font-size: $font-size-base;
+                background: $gray-50;
+                transition: all $transition-base;
+                font-family: $font-family-primary;
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary;
+                    background: $white;
+                    box-shadow: 0 0 0 3px rgba($primary, $opacity-10);
+                }
+
+                &::placeholder {
+                    color: $gray-400;
+                }
+            }
+
+            .btn-saldo {
+                flex: 1;
+                width: 100%;
+            }
+
+            .form-input {
+                width: 150px;
+            }
+        }
+    }
+
+    .pagos-resumen {
+        margin: 1rem 0 0 0;
+        padding: .5rem 0 0 0;
+        border-top: 2px dashed $border-color-light;
+
+        .resumen-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: .3rem;
+            font-size: 1rem;
+            color: $gray-600;
+
+            &:nth-child(1) {
+                font-size: 1.4rem;
+                color: $gray-800;
+                font-weight: 600;
+
+                .amount {
+                    &.minor {
+                        color: $error;
+                    }
+
+                    &.max{
+                        color: $warning;
+                    }
+                    &.equal{
+                        color: $success;
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    .actions-section{
+        .btn-procesar{
+            width: 100%;
+            padding: 1rem 0;
+        }
+    }
+
+
+
+    // Addi
+    .form-label {
+        font-size: .8rem;
+
+        .required {
+            color: $error-dark;
+        }
+    }
+}
+
+
+// Estilos para mensajes de stock bajo
+.stock-bajo {
+    color: $warning !important;
+    font-weight: 600 !important;
+}
+
+// Animación para agregar productos
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ventas-new .table_productos table.productos_sale tbody tr {
+    animation: slideIn 0.3s ease;
+}
+
+// Responsive
+@media (max-width: 1200px) {
+    .ventas-new {
+        grid-template-columns: 1fr;
+
+        .detail_sale {
+            max-height: none;
+        }
+    }
+}

@@ -11,7 +11,10 @@ interface SearchSelectProps<T> {
   onSelect: (value: any, item: T) => void;
   disabled?: boolean;
   maxResults?: number;
+  defaultValue?: any;
+  onSelectClean?: boolean
 }
+
 
 function SearchSelect<T extends Record<string, any>>({
   items,
@@ -22,12 +25,27 @@ function SearchSelect<T extends Record<string, any>>({
   disabled = false,
   maxResults,
   label,
-  required
+  required,
+  defaultValue,
+  onSelectClean = false,
 }: SearchSelectProps<T>) {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<T[]>([]);
   const [showList, setShowList] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  let returnKeyX = 'id'
+
+  useEffect(() => {
+    if (defaultValue && items.length > 0) {
+      const itemDefault = items.find(
+        (item) => item[returnKeyX ?? displayKey] === defaultValue
+      );
+      if (itemDefault) {
+        setSearch(String(itemDefault[displayKey]));
+      }
+    }
+  }, [defaultValue, items, returnKeyX, displayKey]);
 
   useEffect(() => {
     if (search.trim() === "") {
@@ -59,6 +77,7 @@ function SearchSelect<T extends Record<string, any>>({
   const handleSelect = (item: T) => {
     setSearch(String(item[displayKey]));
     setShowList(false);
+    if (onSelectClean) setSearch('')
     const value = returnKey ? item[returnKey] : item;
     onSelect(value, item);
   };
@@ -70,17 +89,18 @@ function SearchSelect<T extends Record<string, any>>({
           {label} {required && <span className="required">*</span>}
         </label>
       )}
-  
+
       <input
         type="text"
         className="search-select-input"
         placeholder={placeholder}
+        style={{ flex: 1, width: '90%' }}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         onFocus={() => setShowList(true)}
         disabled={disabled}
       />
-  
+
       {showList && (
         <ul className="search-select-list">
           {filtered.length > 0 ? (

@@ -30,6 +30,12 @@ $spacing-lg: 1rem;
   flex-direction: column;
   width: 100%;
 
+  // Children
+  .children{
+    padding: 1rem;
+    flex: 1;
+  }
+
   // Header Section
   &__header {
     display: flex;

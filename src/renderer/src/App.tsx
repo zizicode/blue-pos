@@ -12,7 +12,7 @@ import Almacenes from './modules/app/Inventario/Almacenes/Almacenes';
 import Producto from './modules/app/Producto/Producto';
 import Usuarios from './modules/app/Usuarios/Usuarios';
 import CuentasPorCobrar from './modules/app/Cuentas/CuentasPorCobrar';
-import Ventas from './modules/app/Ventas/Ventas';
+import Ventas from './modules/app/VentasNew/ventas';
 import NotFound from './modules/NotFound';
 import Clientes from './modules/app/Clientes/Clientes';
 

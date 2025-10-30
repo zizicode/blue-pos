@@ -16,10 +16,10 @@ export const abonosController = {
       referencia?: string
       usuario_id: number
     }) {
-      const connection = await getConnection()
+      const pool = await getConnection()
+      const connection = await pool.getConnection()
   
       try {
-        await connection.beginTransaction()
   
         // Obtener información de la cuenta
         const [cuenta] = await connection.execute<RowDataPacket[]>(
@@ -51,7 +51,7 @@ export const abonosController = {
           await connection.rollback()
           return {
             success: false,
-            message: `El monto del abono (${data.monto.toFixed(2)}) es mayor que el saldo pendiente (${cuenta[0].saldo_pendiente.toFixed(2)})`
+            message: `El monto del abono (${data.monto}) es mayor que el saldo pendiente (${cuenta[0].saldo_pendiente})`
           }
         }
   
@@ -121,7 +121,7 @@ export const abonosController = {
             data.usuario_id,
             'abono',
             'cuentas_por_cobrar',
-            `Abono registrado: ${cuenta[0].cliente_nombre} - ${cuenta[0].folio} - ${data.monto.toFixed(2)}`
+            `Abono registrado: ${cuenta[0].cliente_nombre} - ${cuenta[0].folio} - ${data.monto}`
           ]
         )
   

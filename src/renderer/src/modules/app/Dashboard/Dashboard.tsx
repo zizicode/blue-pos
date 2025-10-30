@@ -60,9 +60,16 @@ const Dashboard: React.FC = () => {
       {
         icon: <ShoppingCart className="icon-primary" />,
         title: 'Ventas Hoy',
-        value: `${simboloMoneda}${formatNumber(ventasStats.totalTurno.totalVentas)}`,
+        value: `${simboloMoneda}${formatNumber(ventasStats.totalTurno.totalVentasContado)}`,
         subValue: `Facturas: ${ventasStats.facturasHoy} | ${formatNumber(ventasStats.variacion)}%`,
         private: { modulo: 'ventas', action: 'ver' },
+      },
+      {
+        icon: <DollarSign className="icon-success" />,
+        title: 'Ventas del mes',
+        value: `${simboloMoneda}${formatNumber(ventasStats.totalMes)}`,
+        subValue: `Total en facturas ${ventasStats.promedioVenta}`,
+        private: { modulo: 'inventario', action: 'ver' },
       },
       {
         icon: <DollarSign className="icon-success" />,

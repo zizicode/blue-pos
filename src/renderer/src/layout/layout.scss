@@ -6,6 +6,12 @@
     display: flex;
 }
 
+.container-layout{
+    position: relative;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
 .container-layout .sidebar {
     width: 100%;
     max-width: 200px;

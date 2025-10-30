@@ -37,33 +37,74 @@ export const ventasController = {
   async create(data: VentaData) {
     const pool = await getConnection()
     const connection = await pool.getConnection()
-    
+  
     try {
-
-      // Calcular totales
-      const subtotal = data.detalles.reduce((sum, item) => sum + item.subtotal, 0)
-      const descuento = data.descuento || 0
-      const total = subtotal - descuento
-
-      // Validar que los pagos cubran el total en ventas de contado
+      await connection.beginTransaction()
+  
+      // ✅ 1. Calcular totales considerando descuentos
+      const subtotalBruto = data.detalles.reduce((sum, item) => {
+        return sum + (item.cantidad * item.precio_unitario)
+      }, 0)
+  
+      // Descuento a nivel de detalle (ya aplicado en subtotal de cada item)
+      const descuentoDetalles = data.detalles.reduce((sum, item) => {
+        return sum + (item.descuento_monto || 0)
+      }, 0)
+  
+      // Descuento general de la venta
+      const descuentoGeneral = data.descuento || 0
+  
+      // Total final = Subtotal bruto - descuentos de detalle - descuento general
+      const subtotal = subtotalBruto - descuentoDetalles
+      const total = subtotal - descuentoGeneral
+  
+      // ✅ 2. Validar pagos en ventas de contado
       if (data.tipo_venta === 'contado') {
-        const totalPagos = data.pagos.reduce((sum, pago) => sum + pago.monto, 0)
-        if (totalPagos < total) {
+        const totalPagado = data.pagos.reduce((sum, pago) => sum + pago.monto, 0)
+        
+        if (totalPagado < total) {
           await connection.rollback()
           return {
             success: false,
-            message: 'Los pagos no cubren el total de la venta'
+            message: `Pago insuficiente. Total a pagar: $${total.toFixed(2)}, Pagado: $${totalPagado.toFixed(2)}. Falta: $${(total - totalPagado).toFixed(2)}`
           }
         }
       }
-
+  
+      // ✅ Validación de límite de crédito
+      if (data.tipo_venta === 'credito' && data.cliente_id) {
+        const [clienteRow] = await connection.execute<RowDataPacket[]>(
+          'SELECT saldo_actual, limite_credito, nombre FROM clientes WHERE id = ?',
+          [data.cliente_id]
+        )
+  
+        if (clienteRow.length === 0) {
+          await connection.rollback()
+          return {
+            success: false,
+            message: 'Cliente no encontrado'
+          }
+        }
+  
+        const { saldo_actual, limite_credito, nombre } = clienteRow[0]
+        const disponible = limite_credito - saldo_actual
+  
+        if (total > disponible) {
+          await connection.rollback()
+          return {
+            success: false,
+            message: `El cliente "${nombre}" supera su límite de crédito. Disponible: $${disponible.toFixed(2)}`
+          }
+        }
+      }
+  
       // Generar folio único
       const [maxFolio] = await connection.execute<RowDataPacket[]>(
         "SELECT MAX(CAST(SUBSTRING(folio, 3) AS UNSIGNED)) as max_num FROM ventas WHERE folio LIKE 'V-%'"
       )
       const nextNum = (maxFolio[0]?.max_num || 0) + 1
       const folio = `V-${String(nextNum).padStart(6, '0')}`
-
+  
       // Insertar venta
       const [ventaResult] = await connection.execute<ResultSetHeader>(
         `INSERT INTO ventas (
@@ -75,16 +116,16 @@ export const ventasController = {
           data.cliente_id || null,
           data.almacen_id || null,
           data.usuario_id,
-          subtotal,
-          descuento,
+          subtotalBruto - descuentoDetalles,
+          descuentoGeneral,
           total,
           data.tipo_venta,
           data.notas || null
         ]
       )
-
+  
       const ventaId = ventaResult.insertId
-
+  
       // Insertar detalles de venta
       for (const detalle of data.detalles) {
         // Verificar stock disponible
@@ -92,7 +133,7 @@ export const ventasController = {
           'SELECT stock_actual, nombre FROM productos WHERE id = ?',
           [detalle.producto_id]
         )
-
+  
         if (stockCheck.length === 0) {
           await connection.rollback()
           return {
@@ -100,7 +141,7 @@ export const ventasController = {
             message: `Producto con ID ${detalle.producto_id} no encontrado`
           }
         }
-
+  
         if (stockCheck[0].stock_actual < detalle.cantidad) {
           await connection.rollback()
           return {
@@ -108,7 +149,7 @@ export const ventasController = {
             message: `Stock insuficiente para ${stockCheck[0].nombre}. Disponible: ${stockCheck[0].stock_actual}`
           }
         }
-
+  
         // Insertar detalle
         await connection.execute(
           `INSERT INTO detalle_ventas (
@@ -122,19 +163,19 @@ export const ventasController = {
             detalle.precio_unitario,
             detalle.descuento_porcentaje || 0,
             detalle.descuento_monto || 0,
-            detalle.subtotal
+            (detalle.cantidad * detalle.precio_unitario) - (detalle.descuento_monto || 0)
           ]
         )
-
+  
         // Actualizar stock
         const stockAnterior = stockCheck[0].stock_actual
         const stockNuevo = stockAnterior - detalle.cantidad
-
+  
         await connection.execute(
           'UPDATE productos SET stock_actual = ? WHERE id = ?',
           [stockNuevo, detalle.producto_id]
         )
-
+  
         // Registrar movimiento de inventario
         await connection.execute(
           `INSERT INTO movimientos_inventario (
@@ -155,16 +196,33 @@ export const ventasController = {
           ]
         )
       }
-
-      // Insertar pagos
+  
+      // ✅ CLAVE: Calcular montos proporcionales por método de pago
+      const totalPagado = data.pagos.reduce((sum, pago) => sum + pago.monto, 0)
+      const cambioTotal = data.tipo_venta === 'contado' ? Math.max(0, totalPagado - total) : 0
+  
+      // Insertar pagos (registrando solo el monto real de la venta)
       for (const pago of data.pagos) {
+        // 🎯 Calcular monto proporcional que corresponde a este método de pago
+        // Si hay cambio, se descuenta proporcionalmente de cada método
+        let montoReal = pago.monto
+        
+        if (cambioTotal > 0 && totalPagado > 0) {
+          // Proporción de este pago respecto al total pagado
+          const proporcion = pago.monto / totalPagado
+          // Cambio que corresponde a este método
+          const cambioMetodo = cambioTotal * proporcion
+          // Monto real que queda en caja
+          montoReal = pago.monto - cambioMetodo
+        }
+  
         await connection.execute(
           `INSERT INTO pagos_venta (
             venta_id, metodo_pago_id, monto, referencia
           ) VALUES (?, ?, ?, ?)`,
-          [ventaId, pago.metodo_pago_id, pago.monto, pago.referencia || null]
+          [ventaId, pago.metodo_pago_id, montoReal, pago.referencia || null]
         )
-
+  
         // Registrar movimiento de caja si hay turno abierto
         const [turnoAbierto] = await connection.execute<RowDataPacket[]>(
           `SELECT id FROM turnos_caja 
@@ -172,7 +230,7 @@ export const ventasController = {
            ORDER BY fecha_apertura DESC LIMIT 1`,
           [data.usuario_id]
         )
-
+  
         if (turnoAbierto.length > 0) {
           await connection.execute(
             `INSERT INTO movimientos_caja (
@@ -182,7 +240,7 @@ export const ventasController = {
             [
               turnoAbierto[0].id,
               'venta',
-              pago.monto,
+              montoReal, // 🎯 Registrar monto real, no el que entregó el cliente
               pago.metodo_pago_id,
               'venta',
               ventaId,
@@ -191,11 +249,11 @@ export const ventasController = {
           )
         }
       }
-
-      // Si es venta a crédito, crear cuenta por cobrar
+  
+      // Crear cuenta por cobrar si es venta a crédito
       if (data.tipo_venta === 'credito' && data.cliente_id) {
         const fechaVencimiento = data.fecha_vencimiento || null
-
+  
         await connection.execute(
           `INSERT INTO cuentas_por_cobrar (
             cliente_id, venta_id, monto_total, 
@@ -203,14 +261,14 @@ export const ventasController = {
           ) VALUES (?, ?, ?, ?, ?)`,
           [data.cliente_id, ventaId, total, total, fechaVencimiento]
         )
-
+  
         // Actualizar saldo del cliente
         await connection.execute(
           'UPDATE clientes SET saldo_actual = saldo_actual + ? WHERE id = ?',
           [total, data.cliente_id]
         )
       }
-
+  
       // Registrar en logs
       await connection.execute(
         `INSERT INTO logs (usuario_id, accion, modulo, descripcion) 
@@ -222,19 +280,23 @@ export const ventasController = {
           `Venta registrada: ${folio} - Total: $${total.toFixed(2)}`
         ]
       )
-
+  
       await connection.commit()
-
+  
       return {
         success: true,
         message: 'Venta registrada correctamente',
         data: {
           id: ventaId,
-          folio: folio,
-          total: total
+          folio,
+          subtotal: subtotalBruto - descuentoDetalles,
+          descuento: descuentoGeneral,
+          total,
+          pagado: totalPagado,
+          cambio: cambioTotal
         }
       }
-
+  
     } catch (error) {
       await connection.rollback()
       console.error('Error al crear venta:', error)
@@ -243,6 +305,8 @@ export const ventasController = {
         message: 'Error al registrar venta',
         error: error instanceof Error ? error.message : 'Error desconocido'
       }
+    } finally {
+      connection.release()
     }
   },
 
@@ -360,7 +424,7 @@ export const ventasController = {
   async getById(data: { id: number }) {
     try {
       const connection = await getConnection();
-  
+
       // Obtener venta principal con cliente, usuario y almacén
       const [venta] = await connection.execute<RowDataPacket[]>(
         `SELECT 
@@ -377,11 +441,11 @@ export const ventasController = {
          WHERE v.id = ?`,
         [data.id]
       );
-  
+
       if (venta.length === 0) {
         return { success: false, message: 'Venta no encontrada' };
       }
-  
+
       // Obtener detalles de la venta con datos del producto y unidad de medida
       const [detalles] = await connection.execute<RowDataPacket[]>(
         `SELECT 
@@ -397,7 +461,7 @@ export const ventasController = {
          ORDER BY dv.id`,
         [data.id]
       );
-  
+
       // Obtener pagos asociados a la venta
       const [pagos] = await connection.execute<RowDataPacket[]>(
         `SELECT 
@@ -409,7 +473,7 @@ export const ventasController = {
          ORDER BY pv.fecha`,
         [data.id]
       );
-  
+
       return {
         success: true,
         data: {
@@ -426,7 +490,7 @@ export const ventasController = {
         error: error instanceof Error ? error.message : 'Error desconocido',
       };
     }
-  },  
+  },
 
   /**
    * Obtener venta por folio
@@ -462,10 +526,10 @@ export const ventasController = {
    * Cancelar venta
    */
   async cancelar(data: { id: number; usuario_id: number; motivo?: string }) {
-    const connection = await getConnection()
+    const pool = await getConnection()
+    const connection = await pool.getConnection()
 
     try {
-      await connection.beginTransaction()
 
       // Obtener venta
       const [venta] = await connection.execute<RowDataPacket[]>(
@@ -584,7 +648,7 @@ export const ventasController = {
   }) {
     try {
       const connection = await getConnection()
-      
+
       let whereClause = 'WHERE v.estado = "completada" AND DATE(v.fecha) BETWEEN ? AND ?'
       const params: any[] = [data.fecha_inicio, data.fecha_fin]
 
