@@ -10,6 +10,7 @@ import { ArrowLeftToLine, CircleOff, Download, FileText, ReceiptText } from 'luc
 import { useAuthStore } from '@renderer/store/auth';
 import FormInput, { InputConfig } from '@renderer/components/FormsInputs/FormsInputs';
 import { formatPrice } from '@renderer/hooks/usePriceInput';
+import Toast from '@renderer/lib/toast';
 
 interface ModalProps {
   isOpen: boolean;
@@ -19,13 +20,14 @@ interface ModalProps {
 const VentasModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const { call } = useApi();
   const { user } = useAuthStore();
-  const { usuarios } = usePOSStore();
+  const { usuarios, configuracion } = usePOSStore();
   
   const [modeVenta, setModeVenta] = useState<'tabla' | 'detalle'>('tabla');
   const [ventasConDetalles, setVentasConDetalles] = useState<VentaConDetalles[]>([]);
   const [ventasSeleccionadas, setVentasSeleccionadas] = useState<VentaConDetalles[]>([]);
   const [ventaActual, setVentaActual] = useState<VentaConDetalles | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // ==================== CARGA DE DATOS ====================
   
@@ -48,7 +50,7 @@ const VentasModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isOpen]); // ✅ Solo depende de isOpen, no de call
+  }, [isOpen]);
 
   useEffect(() => {
     cargarVentas();
@@ -74,8 +76,8 @@ const VentasModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       );
 
       console.log('✅ Facturas anuladas');
-      await cargarVentas(); // Recargar lista
-      setVentasSeleccionadas([]); // Limpiar selección
+      await cargarVentas();
+      setVentasSeleccionadas([]);
     } catch (error) {
       console.error('❌ Error al anular facturas:', error);
     }
@@ -92,10 +94,37 @@ const VentasModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     setVentaActual(null);
   }, []);
 
-  const handleDescargarPDF = useCallback((ventas: VentaConDetalles[]) => {
-    console.log('Descargar PDF:', ventas);
-    // TODO: Implementar descarga de PDF
-  }, []);
+  // ==================== GENERAR PDF ====================
+  const handleDescargarPDF = useCallback(async (ventas: VentaConDetalles[]) => {
+    if (ventas.length === 0) {
+      Toast.info('Debes seleccionar al menos una factura');
+      return;
+    }
+
+    try {
+      setIsGeneratingPDF(true);
+      Toast.info(`Generando PDF de ${ventas.length} factura(s)...`);
+      
+      const factura_ids = ventas.map(v => v.id);
+
+      const result = await call('ventas', 'imprimirFacturaCliente', {
+        venta_id: factura_ids[0],
+        configuracion
+      });
+
+      if (result?.success) {
+        Toast.success(`✅ PDF generado correctamente`);
+        setVentasSeleccionadas([]);
+      } else {
+        Toast.error(result?.message || 'Error al generar PDF');
+      }
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      Toast.error('Error al generar el PDF');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  }, [call, configuracion]);
 
   // ==================== CONFIGURACIÓN DE INPUTS ====================
 
@@ -179,12 +208,14 @@ const VentasModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       icon: <CircleOff size={14} />,
     },
     {
-      label: 'Descargar PDF',
+      label: `Descargar PDF${ventasSeleccionadas.length > 1 ? ` (${ventasSeleccionadas.length})` : ''}`,
       onClick: handleDescargarPDF,
       icon: <Download size={14} />,
       variant: 'primary',
+      disabled: isGeneratingPDF,
+      showWhen: 'single'
     },
-  ], [ventasSeleccionadas.length, handleVerDetalles, handleCancelarFactura, handleDescargarPDF]);
+  ], [ventasSeleccionadas.length, handleVerDetalles, handleCancelarFactura, handleDescargarPDF, isGeneratingPDF]);
 
   const configTablaVentas: DataTableProps = useMemo(() => ({
     title: 'Todas las Facturas',

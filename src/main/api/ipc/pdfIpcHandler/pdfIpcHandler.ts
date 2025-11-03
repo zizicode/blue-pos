@@ -1,5 +1,6 @@
 import { DatosFacturas, generarYAbrirFacturas } from "./pdf-factura"
-import { DatosReporteConsolidado, generarReporteTurno } from "./pdf-generator"
+import { generarReporteTurnos as generarPDF } from "./pdf-reporte-turnos"
+import { turnosCajaController } from "../caja/turnosCajaController"
 
 interface PDFResponse {
   success: boolean
@@ -10,12 +11,21 @@ interface PDFResponse {
 export const PDF = {
   /**
    * Genera y abre el reporte consolidado de turnos
-   * @param datos Datos del reporte consolidado
-   * @param nombreArchivo Nombre opcional del archivo (por defecto: Reporte-Consolidado-{timestamp}.pdf)
    */
-  async generarReporteTurnos(datos: DatosReporteConsolidado, nombreArchivo?: string): Promise<PDFResponse> {
+  async generarReporteTurno(datos: { turnos: [{id:number}]; configuracion: any }): Promise<PDFResponse> {
     try {
-      const ruta = await generarReporteTurno(datos, nombreArchivo)
+      // 1️⃣ Consultar información completa de los turnos
+      const x = await turnosCajaController.generarReporteTurnos({
+        turno_ids: datos.turnos.map(t => typeof t === "object" ? t.id : t),
+      })
+
+      if (!x.success || !x.data) {
+        throw new Error(x.message || "No se pudieron obtener los turnos")
+      }
+
+      // 2️⃣ Generar el PDF usando la data completa
+      const ruta = await generarPDF(x.data, datos.configuracion)
+
       return {
         success: true,
         message: "Reporte de turnos generado y abierto correctamente",
@@ -32,8 +42,6 @@ export const PDF = {
 
   /**
    * Genera y abre las facturas en PDF
-   * @param datos Datos de las facturas (puede ser una o múltiples)
-   * @param nombreArchivo Nombre opcional del archivo (por defecto: Facturas-{timestamp}.pdf)
    */
   async generarFacturas(datos: DatosFacturas, nombreArchivo?: string): Promise<PDFResponse> {
     try {

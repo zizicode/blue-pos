@@ -388,7 +388,7 @@ const Ventas: React.FC = () => {
         setLoad(true);
         
         // Aquí iría tu llamada al backend:
-        await call("ventas", "create",payload);
+        await call("ventas", "create", {...payload, configuracion});
         
         setTimeout(() => {
             setLoad(false);
@@ -403,7 +403,7 @@ const Ventas: React.FC = () => {
                 monto: 0,
                 referencia: ''
             });
-        }, 2400);
+        }, 1400);
     }, [validarVenta, prepararPayload, tipoFactura, metodosPago]);
 
     // ==================== RENDER ====================

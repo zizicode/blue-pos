@@ -227,9 +227,9 @@ export const turnosCajaController = {
         [turno[0].id]
       )
 
-      const montoActual = Number(turno[0].monto_inicial) + 
-                         (Number(totales[0].total_entradas) || 0) - 
-                         (Number(totales[0].total_salidas) || 0)
+      const montoActual = Number(turno[0].monto_inicial) +
+        (Number(totales[0].total_entradas) || 0) -
+        (Number(totales[0].total_salidas) || 0)
 
       return {
         success: true,
@@ -305,8 +305,8 @@ export const turnosCajaController = {
         params.push(estado)
       }
 
-      const whereClause = whereConditions.length > 0 
-        ? `WHERE ${whereConditions.join(' AND ')}` 
+      const whereClause = whereConditions.length > 0
+        ? `WHERE ${whereConditions.join(' AND ')}`
         : ''
 
       const query = `
@@ -482,5 +482,276 @@ export const turnosCajaController = {
         error: error instanceof Error ? error.message : 'Error desconocido'
       }
     }
+  },
+
+  /**
+   * Obtener ganancia bruta del turno
+   * Calcula correctamente considerando descuentos aplicados
+   */
+  async getGananciaBruta(data: { turno_id: number }) {
+    try {
+      const connection = await getConnection()
+
+      // Obtener información del turno
+      const [turnoInfo] = await connection.execute<RowDataPacket[]>(
+        `SELECT fecha_apertura, fecha_cierre, usuario_id 
+       FROM turnos_caja 
+       WHERE id = ?`,
+        [data.turno_id]
+      )
+
+      if (turnoInfo.length === 0) {
+        return {
+          success: false,
+          message: 'Turno no encontrado'
+        }
+      }
+
+      const turno = turnoInfo[0]
+
+      // Calcular ganancia bruta
+      // IMPORTANTE: subtotal ya tiene el descuento aplicado
+      // Ganancia = subtotal - (precio_compra * cantidad)
+      const [resultado] = await connection.execute<RowDataPacket[]>(
+        `SELECT 
+        -- Ganancia bruta: lo que se cobró menos lo que costó
+        SUM(dv.subtotal - (p.precio_compra * dv.cantidad)) as ganancia_bruta,
+        
+        -- Ventas totales (lo que realmente se cobró después de descuentos)
+        SUM(dv.subtotal) as ventas_totales,
+        
+        -- Costo total de los productos vendidos
+        SUM(p.precio_compra * dv.cantidad) as costo_total,
+        
+        -- Descuentos aplicados
+        SUM(dv.descuento_monto) as total_descuentos,
+        
+        -- Estadísticas
+        COUNT(DISTINCT v.id) as total_facturas,
+        SUM(dv.cantidad) as unidades_vendidas
+        
+      FROM ventas v
+      INNER JOIN detalle_ventas dv ON v.id = dv.venta_id
+      INNER JOIN productos p ON dv.producto_id = p.id
+      WHERE v.usuario_id = ?
+        AND v.fecha BETWEEN ? AND COALESCE(?, NOW())
+        AND v.estado = 'completada'`,
+        [turno.usuario_id, turno.fecha_apertura, turno.fecha_cierre]
+      )
+
+      // Calcular pérdidas por devoluciones
+      const [devoluciones] = await connection.execute<RowDataPacket[]>(
+        `SELECT 
+        -- Pérdida por devoluciones
+        SUM(dd.subtotal - (p.precio_compra * dd.cantidad)) as perdida_devoluciones,
+        SUM(dd.subtotal) as monto_devuelto,
+        COUNT(DISTINCT d.id) as total_devoluciones
+        
+      FROM devoluciones d
+      INNER JOIN detalle_devoluciones dd ON d.id = dd.devolucion_id
+      INNER JOIN productos p ON dd.producto_id = p.id
+      INNER JOIN ventas v ON d.venta_id = v.id
+      WHERE v.usuario_id = ?
+        AND d.fecha BETWEEN ? AND COALESCE(?, NOW())
+        AND d.estado = 'completada'`,
+        [turno.usuario_id, turno.fecha_apertura, turno.fecha_cierre]
+      )
+
+      const gananciaBruta = Number(resultado[0]?.ganancia_bruta) || 0
+      const perdidaDevoluciones = Number(devoluciones[0]?.perdida_devoluciones) || 0
+      const gananciaNeta = gananciaBruta - perdidaDevoluciones
+
+      const ventasTotales = Number(resultado[0]?.ventas_totales) || 0
+      const costoTotal = Number(resultado[0]?.costo_total) || 0
+
+      return {
+        success: true,
+        data: {
+          // Ganancias
+          ganancia_bruta: Number(gananciaBruta.toFixed(2)),
+          perdida_devoluciones: Number(perdidaDevoluciones.toFixed(2)),
+          ganancia_neta: Number(gananciaNeta.toFixed(2)),
+
+          // Ventas y costos
+          ventas_totales: Number(ventasTotales.toFixed(2)),
+          costo_total: Number(costoTotal.toFixed(2)),
+
+          // Descuentos
+          total_descuentos: Number((Number(resultado[0]?.total_descuentos) || 0).toFixed(2)),
+
+          // Devoluciones
+          monto_devuelto: Number((Number(devoluciones[0]?.monto_devuelto) || 0).toFixed(2)),
+          total_devoluciones: Number(devoluciones[0]?.total_devoluciones) || 0,
+
+          // Estadísticas
+          total_facturas: Number(resultado[0]?.total_facturas) || 0,
+          unidades_vendidas: Number(resultado[0]?.unidades_vendidas) || 0,
+
+          // Márgenes
+          margen_bruto_porcentaje: ventasTotales > 0
+            ? ((gananciaBruta / ventasTotales) * 100).toFixed(2)
+            : "0.00",
+          margen_neto_porcentaje: ventasTotales > 0
+            ? ((gananciaNeta / ventasTotales) * 100).toFixed(2)
+            : "0.00",
+
+          // ROI (Return on Investment)
+          roi_porcentaje: costoTotal > 0
+            ? ((gananciaNeta / costoTotal) * 100).toFixed(2)
+            : "0.00"
+        }
+      }
+    } catch (error) {
+      console.error('Error al calcular ganancia bruta:', error)
+      return {
+        success: false,
+        message: 'Error al calcular ganancia bruta',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      }
+    }
+  },
+
+  /**
+   * Generar reporte PDF de uno o múltiples turnos
+   */
+  async generarReporteTurnos(data: {
+    turno_ids: number[]
+  }) {
+    try {
+      const connection = await getConnection()
+
+      // Obtener información completa de cada turno
+      const turnosCompletos = await Promise.all(
+        data.turno_ids.map(async (turno_id) => {
+          // Información básica del turno
+          const [turnoInfo] = await connection.execute<RowDataPacket[]>(
+            `SELECT 
+            tc.*,
+            c.nombre as caja_nombre,
+            u.nombre as usuario_nombre,
+            a.nombre as almacen_nombre
+          FROM turnos_caja tc
+          INNER JOIN cajas c ON tc.caja_id = c.id
+          INNER JOIN usuarios u ON tc.usuario_id = u.id
+          LEFT JOIN almacenes a ON c.almacen_id = a.id
+          WHERE tc.id = ?`,
+            [turno_id]
+          )
+
+          if (turnoInfo.length === 0) return null
+
+          const turno = turnoInfo[0]
+
+          // Movimientos del turno
+          const [movimientos] = await connection.execute<RowDataPacket[]>(
+            `SELECT 
+            mc.*,
+            mp.nombre as metodo_pago_nombre
+          FROM movimientos_caja mc
+          LEFT JOIN metodos_pago mp ON mc.metodo_pago_id = mp.id
+          WHERE mc.turno_id = ?
+          ORDER BY mc.fecha ASC`,
+            [turno_id]
+          )
+
+          // Resumen por método de pago
+          const [resumenMetodos] = await connection.execute<RowDataPacket[]>(
+            `SELECT 
+            mp.nombre as metodo_pago,
+            mp.id as metodo_pago_id,
+            SUM(CASE WHEN mc.tipo IN ('entrada', 'venta', 'abono') THEN mc.monto ELSE 0 END) as total_entradas,
+            SUM(CASE WHEN mc.tipo IN ('salida', 'devolucion') THEN mc.monto ELSE 0 END) as total_salidas,
+            COUNT(*) as cantidad_movimientos
+          FROM movimientos_caja mc
+          INNER JOIN metodos_pago mp ON mc.metodo_pago_id = mp.id
+          WHERE mc.turno_id = ?
+          GROUP BY mc.metodo_pago_id, mp.nombre`,
+            [turno_id]
+          )
+
+          // Calcular ganancias brutas
+          const [ganancias] = await connection.execute<RowDataPacket[]>(
+            `SELECT 
+            SUM(dv.subtotal - (p.precio_compra * dv.cantidad)) as ganancia_bruta,
+            SUM(dv.subtotal) as ventas_totales,
+            SUM(p.precio_compra * dv.cantidad) as costo_total,
+            SUM(dv.descuento_monto) as total_descuentos,
+            COUNT(DISTINCT v.id) as total_facturas,
+            SUM(dv.cantidad) as unidades_vendidas
+          FROM ventas v
+          INNER JOIN detalle_ventas dv ON v.id = dv.venta_id
+          INNER JOIN productos p ON dv.producto_id = p.id
+          WHERE v.usuario_id = ?
+            AND v.fecha BETWEEN ? AND COALESCE(?, NOW())
+            AND v.estado = 'completada'`,
+            [turno.usuario_id, turno.fecha_apertura, turno.fecha_cierre]
+          )
+
+          // Devoluciones
+          const [devoluciones] = await connection.execute<RowDataPacket[]>(
+            `SELECT 
+            SUM(dd.subtotal - (p.precio_compra * dd.cantidad)) as perdida_devoluciones,
+            SUM(dd.subtotal) as monto_devuelto,
+            COUNT(DISTINCT d.id) as total_devoluciones
+          FROM devoluciones d
+          INNER JOIN detalle_devoluciones dd ON d.id = dd.devolucion_id
+          INNER JOIN productos p ON dd.producto_id = p.id
+          INNER JOIN ventas v ON d.venta_id = v.id
+          WHERE v.usuario_id = ?
+            AND d.fecha BETWEEN ? AND COALESCE(?, NOW())
+            AND d.estado = 'completada'`,
+            [turno.usuario_id, turno.fecha_apertura, turno.fecha_cierre]
+          )
+
+          const gananciaBruta = Number(ganancias[0]?.ganancia_bruta) || 0
+          const perdidaDevoluciones = Number(devoluciones[0]?.perdida_devoluciones) || 0
+          const gananciaNeta = gananciaBruta - perdidaDevoluciones
+
+          return {
+            ...turno,
+            movimientos,
+            resumen_metodos: resumenMetodos,
+            estadisticas: {
+              ganancia_bruta: gananciaBruta,
+              perdida_devoluciones: perdidaDevoluciones,
+              ganancia_neta: gananciaNeta,
+              ventas_totales: Number(ganancias[0]?.ventas_totales) || 0,
+              costo_total: Number(ganancias[0]?.costo_total) || 0,
+              total_descuentos: Number(ganancias[0]?.total_descuentos) || 0,
+              monto_devuelto: Number(devoluciones[0]?.monto_devuelto) || 0,
+              total_devoluciones: Number(devoluciones[0]?.total_devoluciones) || 0,
+              total_facturas: Number(ganancias[0]?.total_facturas) || 0,
+              unidades_vendidas: Number(ganancias[0]?.unidades_vendidas) || 0,
+              margen_bruto_porcentaje: Number(ganancias[0]?.ventas_totales) > 0
+                ? ((gananciaBruta / Number(ganancias[0]?.ventas_totales)) * 100).toFixed(2)
+                : "0.00"
+            }
+          }
+        })
+      )
+
+      // Filtrar turnos nulos
+      const turnosValidos = turnosCompletos.filter(t => t !== null)
+
+      if (turnosValidos.length === 0) {
+        return {
+          success: false,
+          message: 'No se encontraron turnos válidos'
+        }
+      }
+
+      return {
+        success: true,
+        data: turnosValidos
+      }
+    } catch (error) {
+      console.error('Error al generar reporte de turnos:', error)
+      return {
+        success: false,
+        message: 'Error al generar reporte',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      }
+    }
   }
+
 }
